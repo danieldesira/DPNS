@@ -1,11 +1,13 @@
-@DPNS_HostAddress = http://localhost:5208
-
-GET {{DPNS_HostAddress}}/weatherforecast/
-Accept: application/json
-
-###
+@DPNS_HostAddress = http://localhost:32770
 
 POST {{DPNS_HostAddress}}/api/subscription/
 Accept: application/json
+Content-Type: application/json
+
+{
+  "endpoint": "https://example.com/abc",
+  "auth": "abcdefghijklm",
+  "P256DH": "kdsfsferfowkfpewkpoew"
+}
 
 ###

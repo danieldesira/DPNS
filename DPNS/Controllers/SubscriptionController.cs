@@ -1,6 +1,4 @@
-﻿using DPNS.PayloadModels;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using WebPush;
 
 namespace DPNS.Controllers
@@ -9,6 +7,8 @@ namespace DPNS.Controllers
     [ApiController]
     public class SubscriptionController : ControllerBase
     {
+        public SubscriptionController() { }
+
         [HttpPost]
         public IResult CreateSubscription([FromBody] PushSubscription payload)
         {
@@ -31,7 +31,15 @@ namespace DPNS.Controllers
                 return Results.BadRequest("Public key does not match!");
             }
 
+            
+
             return Results.Ok(new { message = "Client subscribed successfully!" });
+        }
+
+        [HttpGet]
+        public IResult Get()
+        {
+            return Results.Ok(new { x = 500 });
         }
     }
 }
