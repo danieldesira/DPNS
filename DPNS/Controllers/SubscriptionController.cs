@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Caching.Memory;
 using WebPush;
 
 namespace DPNS.Controllers
@@ -7,7 +8,14 @@ namespace DPNS.Controllers
     [ApiController]
     public class SubscriptionController : ControllerBase
     {
-        public SubscriptionController() { }
+        private IMemoryCache _cache;
+
+        public SubscriptionController()
+        {
+            var builder = WebApplication.CreateBuilder();
+            builder.Services.AddMemoryCache();
+            this._cache = builder.Build().Services.GetRequiredService<IMemoryCache>();
+        }
 
         [HttpPost]
         public IResult CreateSubscription([FromBody] PushSubscription payload)
@@ -31,15 +39,18 @@ namespace DPNS.Controllers
                 return Results.BadRequest("Public key does not match!");
             }
 
-            
+            var subscriptions = this._cache.Get<List<PushSubscription>>("subscriptions");
+            if (subscriptions == null)
+            {
+                subscriptions = new List<PushSubscription> { payload };
+            }
+            else
+            {
+                subscriptions.Add(payload);
+            }
+            this._cache.Set("subscriptions", subscriptions);
 
             return Results.Ok(new { message = "Client subscribed successfully!" });
-        }
-
-        [HttpGet]
-        public IResult Get()
-        {
-            return Results.Ok(new { x = 500 });
         }
     }
 }

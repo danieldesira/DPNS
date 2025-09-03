@@ -1,4 +1,4 @@
-@DPNS_HostAddress = http://localhost:32770
+@DPNS_HostAddress = http://localhost:32768
 
 POST {{DPNS_HostAddress}}/api/subscription/
 Accept: application/json
@@ -6,8 +6,8 @@ Content-Type: application/json
 
 {
   "endpoint": "https://example.com/abc",
-  "auth": "abcdefghijklm",
-  "P256DH": "kdsfsferfowkfpewkpoew"
+  "auth": "5q3n7J6EgyVAb6pgE",
+  "P256DH": "BDRd50z5ESS32mFqaLVJIT-Ap-EgwELoHWo2BFa5_oZSGHKLtQcM3w4-nEA2XOnM6QMN1zYApbs4SjjQgt56rQk"
 }
 
 ###
