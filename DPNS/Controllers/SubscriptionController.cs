@@ -53,7 +53,7 @@ namespace DPNS.Controllers
             }
             this.cacheRepository.Set<List<PushSubscription>>("subs", subscriptions);
 
-            return Results.Ok(new { message = "Client subscribed successfully!", sub = serialisedSub });
+            return Results.Ok(new { message = "Client subscribed successfully!" });
         }
     }
 }
