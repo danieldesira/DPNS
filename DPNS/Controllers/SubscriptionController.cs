@@ -1,5 +1,8 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using DPNS.Caching;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Formatters;
 using Microsoft.Extensions.Caching.Memory;
+using Newtonsoft.Json;
 using WebPush;
 
 namespace DPNS.Controllers
@@ -8,13 +11,13 @@ namespace DPNS.Controllers
     [ApiController]
     public class SubscriptionController : ControllerBase
     {
-        private IMemoryCache _cache;
+        private ICacheProvider cacheProvider;
+        private ICacheRepository cacheRepository;
 
-        public SubscriptionController()
+        public SubscriptionController(ICacheRepository cacheRepository, ICacheProvider cacheProvider)
         {
-            var builder = WebApplication.CreateBuilder();
-            builder.Services.AddMemoryCache();
-            this._cache = builder.Build().Services.GetRequiredService<IMemoryCache>();
+            this.cacheRepository = cacheRepository;
+            this.cacheProvider = cacheProvider;
         }
 
         [HttpPost]
@@ -39,18 +42,18 @@ namespace DPNS.Controllers
                 return Results.BadRequest("Public key does not match!");
             }
 
-            var subscriptions = this._cache.Get<List<PushSubscription>>("subscriptions");
+            var subscriptions = this.cacheProvider.Get<List<PushSubscription>>("subs");
             if (subscriptions == null)
             {
-                subscriptions = new List<PushSubscription> { payload };
+                subscriptions = [payload];
             }
             else
             {
                 subscriptions.Add(payload);
             }
-            this._cache.Set("subscriptions", subscriptions);
+            this.cacheRepository.Set<List<PushSubscription>>("subs", subscriptions);
 
-            return Results.Ok(new { message = "Client subscribed successfully!" });
+            return Results.Ok(new { message = "Client subscribed successfully!", sub = serialisedSub });
         }
     }
 }

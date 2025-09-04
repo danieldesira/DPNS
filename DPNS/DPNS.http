@@ -5,7 +5,7 @@ Accept: application/json
 Content-Type: application/json
 
 {
-  "endpoint": "https://example.com/abc",
+  "endpoint": "https://example.com/abcdef",
   "auth": "5q3n7J6EgyVAb6pgE",
   "P256DH": "BDRd50z5ESS32mFqaLVJIT-Ap-EgwELoHWo2BFa5_oZSGHKLtQcM3w4-nEA2XOnM6QMN1zYApbs4SjjQgt56rQk"
 }
