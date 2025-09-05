@@ -21,7 +21,7 @@ namespace DPNS.Controllers
         }
 
         [HttpPost]
-        public IResult CreateSubscription([FromBody] PushSubscription payload)
+        public IResult CreateSubscription([FromBody] WebPush.PushSubscription payload)
         {
             var builder = WebApplication.CreateBuilder();
             string? privateKey = builder.Configuration["PrivateWebPushKey"];
@@ -42,7 +42,7 @@ namespace DPNS.Controllers
                 return Results.BadRequest("Public key does not match!");
             }
 
-            var subscriptions = this.cacheProvider.Get<List<PushSubscription>>("subs");
+            var subscriptions = this.cacheProvider.Get<List<WebPush.PushSubscription>>("subs");
             if (subscriptions == null)
             {
                 subscriptions = [payload];
@@ -51,7 +51,7 @@ namespace DPNS.Controllers
             {
                 subscriptions.Add(payload);
             }
-            this.cacheRepository.Set<List<PushSubscription>>("subs", subscriptions);
+            this.cacheRepository.Set("subs", subscriptions);
 
             return Results.Ok(new { message = "Client subscribed successfully!" });
         }
