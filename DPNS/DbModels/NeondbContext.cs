@@ -56,9 +56,7 @@ public partial class NeondbContext : DbContext
             entity.Property(e => e.Auth)
                 .HasColumnType("character varying")
                 .HasColumnName("auth");
-            entity.Property(e => e.CreatedAt)
-                .HasColumnType("timestamp without time zone")
-                .HasColumnName("created_at");
+            entity.Property(e => e.CreatedAt).HasColumnName("created_at");
             entity.Property(e => e.Endpoint)
                 .HasColumnType("character varying")
                 .HasColumnName("endpoint");

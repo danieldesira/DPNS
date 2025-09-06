@@ -1,5 +1,8 @@
 using DPNS.Caching;
+using DPNS.DbModels;
+using DPNS.Repositories;
 using Enyim.Caching.Configuration;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -20,6 +23,12 @@ builder.Services.AddEnyimMemcached(options => options.Servers = [
 
 builder.Services.AddSingleton<ICacheProvider, CacheProvider>();
 builder.Services.AddSingleton<ICacheRepository, CacheRepository>();
+
+builder.Services.AddDbContext<NeondbContext>(options =>
+    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+builder.Services.AddTransient<ISubscriptionRepository, SubscriptionRepository>();
+builder.Services.AddTransient<INotificationRepository, NotificationRepository>();
 
 var app = builder.Build();
 

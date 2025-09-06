@@ -1,4 +1,5 @@
 ﻿using DPNS.Caching;
+using DPNS.Repositories;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Formatters;
 using Microsoft.Extensions.Caching.Memory;
@@ -11,13 +12,19 @@ namespace DPNS.Controllers
     [ApiController]
     public class SubscriptionController : ControllerBase
     {
-        private ICacheProvider cacheProvider;
-        private ICacheRepository cacheRepository;
+        private readonly ICacheProvider cacheProvider;
+        private readonly ICacheRepository cacheRepository;
+        private readonly ISubscriptionRepository subscriptionRepository;
 
-        public SubscriptionController(ICacheRepository cacheRepository, ICacheProvider cacheProvider)
+        public SubscriptionController(
+            ICacheRepository cacheRepository,
+            ICacheProvider cacheProvider,
+            ISubscriptionRepository subscriptionRepository
+        )
         {
             this.cacheRepository = cacheRepository;
             this.cacheProvider = cacheProvider;
+            this.subscriptionRepository = subscriptionRepository;
         }
 
         [HttpPost]
@@ -26,7 +33,7 @@ namespace DPNS.Controllers
             var builder = WebApplication.CreateBuilder();
             string? privateKey = builder.Configuration["PrivateWebPushKey"];
             string? publicKey = builder.Configuration["PublicWebPushKey"];
-            
+
             if (privateKey == null || publicKey == null)
             {
                 return Results.BadRequest("Configuration incomplete");
@@ -53,7 +60,9 @@ namespace DPNS.Controllers
             }
             this.cacheRepository.Set("subs", subscriptions);
 
-            return Results.Ok(new { message = "Client subscribed successfully!" });
+            subscriptionRepository.AddSubscription(payload);
+
+            return Results.Ok(new { Message = "Client subscribed successfully!" });
         }
     }
 }

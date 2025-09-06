@@ -11,3 +11,14 @@ Content-Type: application/json
 }
 
 ###
+
+POST {{DPNS_HostAddress}}/api/notification/
+Accept: application/json
+Content-Type: application/json
+
+{
+  "title": "test",
+  "text": "This is a test notification!"
+}
+
+###
