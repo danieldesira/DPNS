@@ -1,9 +1,6 @@
 ﻿using DPNS.Caching;
 using DPNS.Repositories;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Formatters;
-using Microsoft.Extensions.Caching.Memory;
-using Newtonsoft.Json;
 using WebPush;
 
 namespace DPNS.Controllers
@@ -12,9 +9,9 @@ namespace DPNS.Controllers
     [ApiController]
     public class SubscriptionController : ControllerBase
     {
-        private readonly ICacheProvider cacheProvider;
-        private readonly ICacheRepository cacheRepository;
-        private readonly ISubscriptionRepository subscriptionRepository;
+        private readonly ICacheProvider _cacheProvider;
+        private readonly ICacheRepository _cacheRepository;
+        private readonly ISubscriptionRepository _subscriptionRepository;
 
         public SubscriptionController(
             ICacheRepository cacheRepository,
@@ -22,34 +19,15 @@ namespace DPNS.Controllers
             ISubscriptionRepository subscriptionRepository
         )
         {
-            this.cacheRepository = cacheRepository;
-            this.cacheProvider = cacheProvider;
-            this.subscriptionRepository = subscriptionRepository;
+            _cacheRepository = cacheRepository;
+            _cacheProvider = cacheProvider;
+            _subscriptionRepository = subscriptionRepository;
         }
 
         [HttpPost]
-        public IResult CreateSubscription([FromBody] WebPush.PushSubscription payload)
+        public IResult CreateSubscription([FromBody] PushSubscription payload)
         {
-            var builder = WebApplication.CreateBuilder();
-            string? privateKey = builder.Configuration["PrivateWebPushKey"];
-            string? publicKey = builder.Configuration["PublicWebPushKey"];
-
-            if (privateKey == null || publicKey == null)
-            {
-                return Results.BadRequest("Configuration incomplete");
-            }
-
-            if (privateKey != payload.Auth)
-            {
-                return Results.BadRequest("Private key does not match!");
-            }
-
-            if (publicKey != payload.P256DH)
-            {
-                return Results.BadRequest("Public key does not match!");
-            }
-
-            var subscriptions = this.cacheProvider.Get<List<WebPush.PushSubscription>>("subs");
+            var subscriptions = _cacheProvider.Get<List<PushSubscription>>("subs");
             if (subscriptions == null)
             {
                 subscriptions = [payload];
@@ -58,9 +36,9 @@ namespace DPNS.Controllers
             {
                 subscriptions.Add(payload);
             }
-            this.cacheRepository.Set("subs", subscriptions);
+            _cacheRepository.Set("subs", subscriptions);
 
-            subscriptionRepository.AddSubscription(payload);
+            _subscriptionRepository.AddSubscription(payload);
 
             return Results.Ok(new { Message = "Client subscribed successfully!" });
         }

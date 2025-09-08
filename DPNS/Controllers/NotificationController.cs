@@ -1,7 +1,9 @@
-﻿using DPNS.Models;
+﻿using DPNS.Extensions;
+using DPNS.Models;
 using DPNS.Repositories;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
+using WebPush;
 
 namespace DPNS.Controllers
 {
@@ -9,32 +11,41 @@ namespace DPNS.Controllers
     [ApiController]
     public class NotificationController : ControllerBase
     {
-        private readonly INotificationRepository notificationRepository;
-        private readonly ISubscriptionRepository subscriptionRepository;
+        private readonly INotificationRepository _notificationRepository;
+        private readonly ISubscriptionRepository _subscriptionRepository;
+        private readonly IConfiguration _configuration;
 
-        public NotificationController(INotificationRepository notificationRepository, ISubscriptionRepository subscriptionRepository)
+        public NotificationController(
+            INotificationRepository notificationRepository,
+            ISubscriptionRepository subscriptionRepository,
+            IConfiguration configuration
+        )
         {
-            this.notificationRepository = notificationRepository;
-            this.subscriptionRepository = subscriptionRepository;
+            _notificationRepository = notificationRepository;
+            _subscriptionRepository = subscriptionRepository;
+            _configuration = configuration;
         }
 
         [HttpPost]
         public IResult SendNotification([FromBody] Notification payload)
         {
-            var subscriptions = subscriptionRepository.GetSubscriptions().Select(s => new WebPush.PushSubscription
-            {
-                Endpoint = s.Endpoint,
-                Auth = s.Auth,
-                P256DH = s.P256dh,
-            });
+            var subscriptions = _subscriptionRepository.GetSubscriptions()
+                .Select(s => new PushSubscription(s.Endpoint, s.P256dh, s.Auth));
 
-            WebPush.WebPushClient webPushClient = new WebPush.WebPushClient();
+            string vapidPublicKey = _configuration["PublicWebPushKey"];
+            string vapidPrivateKey = _configuration["PrivateWebPushKey"];
+
+            WebPushClient webPushClient = new();
+            VapidDetails vapidDetails = new("mailto:desiradaniel2007@gmail.com", vapidPublicKey, vapidPrivateKey);
+
+            string notificationContent = JsonConvert.SerializeObject(payload);
+
             foreach (var sub in subscriptions)
             {
-                webPushClient.SendNotification(sub, payload.Text);
+                webPushClient.SendNotification(sub, notificationContent, vapidDetails);
             }
 
-            notificationRepository.AddNotification(payload.Title, payload.Text);
+            _notificationRepository.AddNotification(payload.Title, payload.Text);
 
             return Results.Ok(new { Message = "Notification sent successfully" });
         }

@@ -30,6 +30,9 @@ builder.Services.AddDbContext<NeondbContext>(options =>
 builder.Services.AddTransient<ISubscriptionRepository, SubscriptionRepository>();
 builder.Services.AddTransient<INotificationRepository, NotificationRepository>();
 
+builder.Services.AddCors(options => options.AddPolicy("Origins",
+    policy => policy.WithOrigins("https://localhost:5173", "https://turtle-quest.vercel.app/")));
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -38,12 +41,12 @@ if (app.Environment.IsDevelopment())
     app.MapOpenApi();
 }
 
+app.UseCors();
+
 app.UseHttpsRedirection();
 
 app.UseAuthorization();
 
 app.MapControllers();
-
-app.UseCors();
 
 app.Run();
