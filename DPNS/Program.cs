@@ -31,7 +31,9 @@ builder.Services.AddTransient<ISubscriptionRepository, SubscriptionRepository>()
 builder.Services.AddTransient<INotificationRepository, NotificationRepository>();
 
 builder.Services.AddCors(options => options.AddPolicy("Origins",
-    policy => policy.WithOrigins("https://localhost:5173", "https://turtle-quest.vercel.app/")));
+    policy => policy.WithOrigins("https://localhost:5173", "https://turtle-quest.vercel.app/")
+                .AllowAnyHeader()
+                .AllowAnyMethod()));
 
 var app = builder.Build();
 
@@ -41,7 +43,7 @@ if (app.Environment.IsDevelopment())
     app.MapOpenApi();
 }
 
-app.UseCors();
+app.UseCors("Origins");
 
 app.UseHttpsRedirection();
 
