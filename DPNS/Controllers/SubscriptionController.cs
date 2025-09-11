@@ -49,7 +49,7 @@ namespace DPNS.Controllers
             }
             catch (InvalidOperationException e)
             {
-                return Results.Conflict(new { Message = e.Message });
+                return Results.Conflict(new { e.Message });
             }
 
             return Results.Ok(new { Message = "Client subscribed successfully!" });

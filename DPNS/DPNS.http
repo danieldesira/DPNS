@@ -1,4 +1,4 @@
-@DPNS_HostAddress = http://localhost:32768
+@DPNS_HostAddress = http://localhost:32770
 
 POST {{DPNS_HostAddress}}/api/subscription/
 Accept: application/json

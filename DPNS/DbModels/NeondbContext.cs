@@ -33,9 +33,7 @@ public partial class NeondbContext : DbContext
             entity.Property(e => e.Id)
                 .UseIdentityAlwaysColumn()
                 .HasColumnName("id");
-            entity.Property(e => e.CreatedAt)
-                .HasColumnType("timestamp without time zone")
-                .HasColumnName("created_at");
+            entity.Property(e => e.CreatedAt).HasColumnName("created_at");
             entity.Property(e => e.Text)
                 .HasColumnType("character varying")
                 .HasColumnName("text");

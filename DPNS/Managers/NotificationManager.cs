@@ -1,11 +1,15 @@
-﻿using DPNS.Repositories;
-using Microsoft.EntityFrameworkCore.Query.Internal;
+﻿using DPNS.DbModels;
+using DPNS.Extensions;
+using DPNS.Repositories;
+using WebPush;
 
 namespace DPNS.Managers
 {
     public interface INotificationManager
     {
         void AddSubscription(string endpoint, string p256dh, string auth);
+        void AddNotification(string title, string text);
+        IList<WebPush.PushSubscription> GetPushSubscriptionList();
     }
 
     public class NotificationManager : INotificationManager
@@ -30,6 +34,21 @@ namespace DPNS.Managers
             }
 
             _subscriptionRepository.AddSubscription(endpoint, p256dh, auth);
+        }
+
+        public void AddNotification(string title, string text)
+        {
+            _notificationRepository.AddNotification(title, text);
+        }
+
+        public IList<WebPush.PushSubscription> GetPushSubscriptionList()
+        {
+            return [.. _subscriptionRepository.GetSubscriptions()
+                .Select(s => new WebPush.PushSubscription(
+                    s.Endpoint,
+                    s.P256dh.ToStandardBase64(),
+                    s.Auth.ToStandardBase64()
+                ))];
         }
     }
 }
