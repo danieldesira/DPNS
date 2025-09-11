@@ -1,7 +1,4 @@
-﻿using DPNS.DbModels;
-using DPNS.Extensions;
-using DPNS.Repositories;
-using WebPush;
+﻿using DPNS.Repositories;
 
 namespace DPNS.Managers
 {
@@ -44,11 +41,7 @@ namespace DPNS.Managers
         public IList<WebPush.PushSubscription> GetPushSubscriptionList()
         {
             return [.. _subscriptionRepository.GetSubscriptions()
-                .Select(s => new WebPush.PushSubscription(
-                    s.Endpoint,
-                    s.P256dh.ToStandardBase64(),
-                    s.Auth.ToStandardBase64()
-                ))];
+                .Select(s => new WebPush.PushSubscription(s.Endpoint, s.P256dh, s.Auth))];
         }
     }
 }

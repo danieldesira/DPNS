@@ -27,11 +27,11 @@ namespace DPNS.Controllers
         {
             _notificationManager.AddNotification(payload.Title, payload.Text);
 
-            string vapidPublicKey = _configuration["PublicWebPushKey"];
-            string vapidPrivateKey = _configuration["PrivateWebPushKey"];
+            string vapidPublicKey = _configuration["PublicWebPushKey"] ?? "";
+            string vapidPrivateKey = _configuration["PrivateWebPushKey"] ?? "";
 
             WebPushClient webPushClient = new();
-            VapidDetails vapidDetails = new("mailto:desiradaniel2007@gmail.com", vapidPublicKey, vapidPrivateKey);
+            VapidDetails vapidDetails = new("mailto:<desiradaniel2007@gmail.com>", vapidPublicKey, vapidPrivateKey);
             
             string notificationContent = JsonConvert.SerializeObject(payload);
             foreach (var sub in _notificationManager.GetPushSubscriptionList())
