@@ -1,7 +1,8 @@
 ﻿using DPNS.Caching;
+using DPNS.Managers;
+using DPNS.Models;
 using DPNS.Repositories;
 using Microsoft.AspNetCore.Mvc;
-using WebPush;
 
 namespace DPNS.Controllers
 {
@@ -11,23 +12,23 @@ namespace DPNS.Controllers
     {
         private readonly ICacheProvider _cacheProvider;
         private readonly ICacheRepository _cacheRepository;
-        private readonly ISubscriptionRepository _subscriptionRepository;
+        private readonly INotificationManager _notificationManager;
 
         public SubscriptionController(
             ICacheRepository cacheRepository,
             ICacheProvider cacheProvider,
-            ISubscriptionRepository subscriptionRepository
+            INotificationManager notificationManager
         )
         {
             _cacheRepository = cacheRepository;
             _cacheProvider = cacheProvider;
-            _subscriptionRepository = subscriptionRepository;
+            _notificationManager = notificationManager;
         }
 
         [HttpPost]
-        public IResult CreateSubscription([FromBody] PushSubscription payload)
+        public IResult CreateSubscription([FromBody] Subscription payload)
         {
-            var subscriptions = _cacheProvider.Get<List<PushSubscription>>("subs");
+            var subscriptions = _cacheProvider.Get<List<Subscription>>("subs");
             if (subscriptions == null)
             {
                 subscriptions = [payload];
@@ -38,7 +39,18 @@ namespace DPNS.Controllers
             }
             _cacheRepository.Set("subs", subscriptions);
 
-            _subscriptionRepository.AddSubscription(payload);
+            try
+            {
+                _notificationManager.AddSubscription(
+                    payload.Endpoint,
+                    payload.Keys.P256dh,
+                    payload.Keys.Auth
+                );
+            }
+            catch (InvalidOperationException e)
+            {
+                return Results.Conflict(new { Message = e.Message });
+            }
 
             return Results.Ok(new { Message = "Client subscribed successfully!" });
         }

@@ -1,12 +1,12 @@
 ﻿using DPNS.DbModels;
-using DPNS.Extensions;
 
 namespace DPNS.Repositories
 {
     public interface ISubscriptionRepository
     {
-        void AddSubscription(WebPush.PushSubscription subscription);
+        void AddSubscription(string endpoint, string p256dh, string auth);
         IList<PushSubscription> GetSubscriptions();
+        PushSubscription? GetSubscription(string endpoint, string p256dh, string auth);
     }
 
 
@@ -16,13 +16,13 @@ namespace DPNS.Repositories
 
         public SubscriptionRepository(NeondbContext dbContext) => this.dbContext = dbContext;
 
-        public void AddSubscription(WebPush.PushSubscription subscription)
+        public void AddSubscription(string endpoint, string p256dh, string auth)
         {
             dbContext.PushSubscriptions.Add(new PushSubscription
             {
-                Auth = subscription.Auth,
-                P256dh = subscription.P256DH,
-                Endpoint = subscription.Endpoint,
+                Auth = auth,
+                P256dh = p256dh,
+                Endpoint = endpoint,
                 CreatedAt = DateTime.UtcNow,
             });
             dbContext.SaveChanges();
@@ -31,6 +31,12 @@ namespace DPNS.Repositories
         public IList<PushSubscription> GetSubscriptions()
         {
             return [.. dbContext.PushSubscriptions];
+        }
+
+        public PushSubscription? GetSubscription(string endpoint, string p256dh, string auth)
+        {
+            return dbContext.PushSubscriptions
+                    .FirstOrDefault(s => s.Endpoint == endpoint && s.P256dh == p256dh && s.Auth == auth);
         }
     }
 }

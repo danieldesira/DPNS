@@ -1,4 +1,6 @@
-﻿namespace DPNS.Extensions
+﻿using System.Text;
+
+namespace DPNS.Extensions
 {
     public static class Base64
     {
@@ -7,8 +9,15 @@
             string output = input.Replace('-', '+').Replace('_', '/');
             switch (output.Length % 4)
             {
-                case 2: output += "=="; break;
-                case 3: output += "="; break;
+                case 1:
+                    output += "===";
+                    break;
+                case 2:
+                    output += "==";
+                    break;
+                case 3:
+                    output += "=";
+                    break;
             }
             return output;
         }

@@ -30,7 +30,11 @@ namespace DPNS.Controllers
         public IResult SendNotification([FromBody] Notification payload)
         {
             var subscriptions = _subscriptionRepository.GetSubscriptions()
-                .Select(s => new PushSubscription(s.Endpoint, s.P256dh, s.Auth));
+                .Select(s => new PushSubscription(
+                    s.Endpoint,
+                    s.P256dh.ToStandardBase64(),
+                    s.Auth.ToStandardBase64()
+                ));
 
             string vapidPublicKey = _configuration["PublicWebPushKey"];
             string vapidPrivateKey = _configuration["PrivateWebPushKey"];
