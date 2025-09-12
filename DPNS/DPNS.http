@@ -5,9 +5,11 @@ Accept: application/json
 Content-Type: application/json
 
 {
-  "endpoint": "https://example.com/abcdef",
-  "auth": "5q3n7J6EgyVAb6pgE",
-  "P256DH": "BDRd50z5ESS32mFqaLVJIT-Ap-EgwELoHWo2BFa5_oZSGHKLtQcM3w4-nEA2XOnM6QMN1zYApbs4SjjQgt56rQk"
+  "endpoint": "https://wns2-db5p.notify.windows.com/w/?token=BQYAAAA%2fCSShMAjWDJXRuPGsryANKHFuVcqJtKpYZ3Eo%2bctLY6CRh1p8h1eWI8lcLd1kuI71NNzwmZg2DzmClH%2bqMnS7aNVe3XCBqCzR98%2by%2bAYjwaL%2fraaiBAGoUzEObzM78lQTP5Nz%2bJzDvUou1T3%2fe%2bez9MbHBK8f1M9L4HSDPSqS0Q464%2bhexW%2feTPaDNwHKxH3SpylRf4bFk4HWymOSKyMiDDAiSCO6jtazL27KhqXtMEu5yJnPo%2bHIpO%2bfZBvXUY1xdrLpfWoBAYFL2ogoM%2f5opTnSd5n2mZkMJuP4coRPt1yJfnwDx7h6yvQvL8%2fhb7k%3d",
+  "keys": {
+    "auth": "mvkuL7zhDhoAWMjQ1cmYcw",
+    "P256DH": "BNNZoX6cmkCtM3Ib8OGVfslVAmCsL6q-dMEm6TdW6rkraE9TUO9fGmu8bvGokEL7AjgnrncMStJndym1IrlSQng"
+  }
 }
 
 ###

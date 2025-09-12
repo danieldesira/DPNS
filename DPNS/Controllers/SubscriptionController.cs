@@ -10,35 +10,13 @@ namespace DPNS.Controllers
     [ApiController]
     public class SubscriptionController : ControllerBase
     {
-        private readonly ICacheProvider _cacheProvider;
-        private readonly ICacheRepository _cacheRepository;
         private readonly INotificationManager _notificationManager;
 
-        public SubscriptionController(
-            ICacheRepository cacheRepository,
-            ICacheProvider cacheProvider,
-            INotificationManager notificationManager
-        )
-        {
-            _cacheRepository = cacheRepository;
-            _cacheProvider = cacheProvider;
-            _notificationManager = notificationManager;
-        }
+        public SubscriptionController(INotificationManager notificationManager) => _notificationManager = notificationManager;
 
         [HttpPost]
         public IResult CreateSubscription([FromBody] Subscription payload)
         {
-            var subscriptions = _cacheProvider.Get<List<Subscription>>("subs");
-            if (subscriptions == null)
-            {
-                subscriptions = [payload];
-            }
-            else
-            {
-                subscriptions.Add(payload);
-            }
-            _cacheRepository.Set("subs", subscriptions);
-
             try
             {
                 _notificationManager.AddSubscription(
