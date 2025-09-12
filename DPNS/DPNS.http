@@ -1,5 +1,15 @@
 @DPNS_HostAddress = http://localhost:32768
 
+POST {{DPNS_HostAddress}}/api/project/
+Accept: application/json
+Content-Type: application/json
+
+{
+  "projectName": "Turtle Quest"
+}
+
+###
+
 POST {{DPNS_HostAddress}}/api/subscription/
 Accept: application/json
 Content-Type: application/json

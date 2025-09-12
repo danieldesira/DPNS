@@ -15,6 +15,8 @@ public partial class NeondbContext : DbContext
     {
     }
 
+    public virtual DbSet<Project> Projects { get; set; }
+
     public virtual DbSet<PushNotification> PushNotifications { get; set; }
 
     public virtual DbSet<PushSubscription> PushSubscriptions { get; set; }
@@ -24,6 +26,26 @@ public partial class NeondbContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        modelBuilder.Entity<Project>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("projects_pk");
+
+            entity.ToTable("projects");
+
+            entity.HasIndex(e => e.ProjectName, "projects_unique").IsUnique();
+
+            entity.HasIndex(e => e.Guid, "projects_unique_uuid").IsUnique();
+
+            entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.CreatedAt)
+                .HasColumnType("time with time zone")
+                .HasColumnName("created_at");
+            entity.Property(e => e.Guid).HasColumnName("guid");
+            entity.Property(e => e.ProjectName)
+                .HasColumnType("character varying")
+                .HasColumnName("project_name");
+        });
+
         modelBuilder.Entity<PushNotification>(entity =>
         {
             entity.HasKey(e => e.Id).HasName("push_notifications_pk");

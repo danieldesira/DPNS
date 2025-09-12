@@ -31,6 +31,8 @@ builder.Services.AddDbContext<NeondbContext>(options =>
 builder.Services.AddTransient<ISubscriptionRepository, SubscriptionRepository>();
 builder.Services.AddTransient<INotificationRepository, NotificationRepository>();
 builder.Services.AddTransient<INotificationManager, NotificationManager>();
+builder.Services.AddTransient<IProjectRepository, ProjectRepository>();
+builder.Services.AddTransient<IProjectManager, ProjectManager>();
 
 builder.Services.AddCors(options => options.AddPolicy("Origins",
     policy => policy.WithOrigins("https://localhost:5173", "https://turtle-quest.vercel.app/")
