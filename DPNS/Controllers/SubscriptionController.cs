@@ -1,7 +1,5 @@
-﻿using DPNS.Caching;
-using DPNS.Managers;
+﻿using DPNS.Managers;
 using DPNS.Models;
-using DPNS.Repositories;
 using Microsoft.AspNetCore.Mvc;
 
 namespace DPNS.Controllers
@@ -10,19 +8,25 @@ namespace DPNS.Controllers
     [ApiController]
     public class SubscriptionController : ControllerBase
     {
+        private readonly IAppManager _appManager;
         private readonly INotificationManager _notificationManager;
 
-        public SubscriptionController(INotificationManager notificationManager) => _notificationManager = notificationManager;
+        public SubscriptionController(IAppManager appManager, INotificationManager notificationManager)
+        {
+            _appManager = appManager;
+            _notificationManager = notificationManager;
+        }
 
         [HttpPost]
-        public IResult CreateSubscription([FromBody] Subscription payload)
+        public IResult CreateSubscription([FromBody] Subscription payload, [FromQuery(Name = "appId")] Guid appId)
         {
             try
             {
                 _notificationManager.AddSubscription(
                     payload.Endpoint,
                     payload.Keys.P256dh,
-                    payload.Keys.Auth
+                    payload.Keys.Auth,
+                    appId
                 );
             }
             catch (InvalidOperationException e)

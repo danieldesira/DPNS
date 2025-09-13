@@ -15,7 +15,7 @@ public partial class NeondbContext : DbContext
     {
     }
 
-    public virtual DbSet<Project> Projects { get; set; }
+    public virtual DbSet<App> Apps { get; set; }
 
     public virtual DbSet<PushNotification> PushNotifications { get; set; }
 
@@ -26,24 +26,33 @@ public partial class NeondbContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        modelBuilder.Entity<Project>(entity =>
+        modelBuilder.Entity<App>(entity =>
         {
             entity.HasKey(e => e.Id).HasName("projects_pk");
 
-            entity.ToTable("projects");
+            entity.ToTable("apps");
 
-            entity.HasIndex(e => e.ProjectName, "projects_unique").IsUnique();
+            entity.HasIndex(e => e.AppName, "projects_unique").IsUnique();
 
             entity.HasIndex(e => e.Guid, "projects_unique_uuid").IsUnique();
 
             entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.AppName)
+                .HasColumnType("character varying")
+                .HasColumnName("app_name");
             entity.Property(e => e.CreatedAt)
                 .HasColumnType("time with time zone")
                 .HasColumnName("created_at");
             entity.Property(e => e.Guid).HasColumnName("guid");
-            entity.Property(e => e.ProjectName)
+            entity.Property(e => e.PrivateKey)
                 .HasColumnType("character varying")
-                .HasColumnName("project_name");
+                .HasColumnName("private_key");
+            entity.Property(e => e.PublicKey)
+                .HasColumnType("character varying")
+                .HasColumnName("public_key");
+            entity.Property(e => e.Url)
+                .HasColumnType("character varying")
+                .HasColumnName("url");
         });
 
         modelBuilder.Entity<PushNotification>(entity =>
@@ -55,6 +64,9 @@ public partial class NeondbContext : DbContext
             entity.Property(e => e.Id)
                 .UseIdentityAlwaysColumn()
                 .HasColumnName("id");
+            entity.Property(e => e.AppUrl)
+                .HasColumnType("character varying")
+                .HasColumnName("app_url");
             entity.Property(e => e.CreatedAt).HasColumnName("created_at");
             entity.Property(e => e.Text)
                 .HasColumnType("character varying")
@@ -73,6 +85,7 @@ public partial class NeondbContext : DbContext
             entity.Property(e => e.Id)
                 .UseIdentityAlwaysColumn()
                 .HasColumnName("id");
+            entity.Property(e => e.AppId).HasColumnName("app_id");
             entity.Property(e => e.Auth)
                 .HasColumnType("character varying")
                 .HasColumnName("auth");
@@ -83,6 +96,11 @@ public partial class NeondbContext : DbContext
             entity.Property(e => e.P256dh)
                 .HasColumnType("character varying")
                 .HasColumnName("p256dh");
+
+            entity.HasOne(d => d.App).WithMany(p => p.PushSubscriptions)
+                .HasForeignKey(d => d.AppId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("push_subscriptions_apps_fk");
         });
 
         OnModelCreatingPartial(modelBuilder);

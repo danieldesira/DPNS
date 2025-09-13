@@ -4,6 +4,7 @@ using DPNS.Managers;
 using DPNS.Repositories;
 using Enyim.Caching.Configuration;
 using Microsoft.EntityFrameworkCore;
+using WebPush;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -31,8 +32,8 @@ builder.Services.AddDbContext<NeondbContext>(options =>
 builder.Services.AddTransient<ISubscriptionRepository, SubscriptionRepository>();
 builder.Services.AddTransient<INotificationRepository, NotificationRepository>();
 builder.Services.AddTransient<INotificationManager, NotificationManager>();
-builder.Services.AddTransient<IProjectRepository, ProjectRepository>();
-builder.Services.AddTransient<IProjectManager, ProjectManager>();
+builder.Services.AddTransient<IAppRepository, AppRepository>();
+builder.Services.AddTransient<IAppManager, AppManager>();
 
 builder.Services.AddCors(options => options.AddPolicy("Origins",
     policy => policy.WithOrigins("https://localhost:5173", "https://turtle-quest.vercel.app/")

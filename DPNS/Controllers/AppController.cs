@@ -8,18 +8,18 @@ namespace DPNS.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class ProjectController : ControllerBase
+    public class AppController : ControllerBase
     {
-        private readonly IProjectManager _projectManager;
+        private readonly IAppManager _appManager;
 
-        public ProjectController(IProjectManager projectManager) => _projectManager = projectManager;
+        public AppController(IAppManager appManager) => _appManager = appManager;
 
         [HttpPost]
-        public IResult CreateProject([FromBody] Project payload)
+        public IResult CreateApp([FromBody] App payload)
         {
             try
             {
-                _projectManager.AddProject(payload.ProjectName);
+                _appManager.AddApp(payload.AppName, payload.Url);
             }
             catch (InvalidOperationException e)
             {

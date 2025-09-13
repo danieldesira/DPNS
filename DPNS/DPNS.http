@@ -5,12 +5,13 @@ Accept: application/json
 Content-Type: application/json
 
 {
-  "projectName": "Turtle Quest"
+  "appName": "Turtle Quest",
+  "url": "https://turtle-quest.vercel.app"
 }
 
 ###
 
-POST {{DPNS_HostAddress}}/api/subscription/
+POST {{DPNS_HostAddress}}/api/subscription/?appId=65033d73-3cdc-416d-9689-1b0b3e73cbad
 Accept: application/json
 Content-Type: application/json
 
@@ -24,7 +25,7 @@ Content-Type: application/json
 
 ###
 
-POST {{DPNS_HostAddress}}/api/notification/
+POST {{DPNS_HostAddress}}/api/notification/?appid=65033d73-3cdc-416d-9689-1b0b3e73cbad
 Accept: application/json
 Content-Type: application/json
 

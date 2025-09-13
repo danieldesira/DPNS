@@ -14,4 +14,8 @@ public partial class PushSubscription
     public string P256dh { get; set; } = null!;
 
     public DateTime CreatedAt { get; set; }
+
+    public int AppId { get; set; }
+
+    public virtual App App { get; set; } = null!;
 }

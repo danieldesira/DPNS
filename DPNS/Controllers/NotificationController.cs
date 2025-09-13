@@ -10,31 +10,30 @@ namespace DPNS.Controllers
     [ApiController]
     public class NotificationController : ControllerBase
     {
-        private readonly IConfiguration _configuration;
+        private readonly IAppManager _appManager;
         private readonly INotificationManager _notificationManager;
 
         public NotificationController(
-            IConfiguration configuration,
+            IAppManager appManager,
             INotificationManager notificationManager
         )
         {
-            _configuration = configuration;
+            _appManager = appManager;
             _notificationManager = notificationManager;
         }
 
         [HttpPost]
-        public IResult SendNotification([FromBody] Notification payload)
+        public IResult SendNotification([FromBody] Notification payload, [FromQuery(Name = "appId")] Guid appId)
         {
-            _notificationManager.AddNotification(payload.Title, payload.Text);
+            _notificationManager.AddNotification(payload.Title, payload.Text, appId);
 
-            string vapidPublicKey = _configuration["PublicWebPushKey"] ?? "";
-            string vapidPrivateKey = _configuration["PrivateWebPushKey"] ?? "";
+            var app = _appManager.GetApp(appId);
 
             WebPushClient webPushClient = new();
-            VapidDetails vapidDetails = new("mailto:<desiradaniel2007@gmail.com>", vapidPublicKey, vapidPrivateKey);
+            VapidDetails vapidDetails = new(app.Url, app.PublicKey, app.PrivateKey);
             
             string notificationContent = JsonConvert.SerializeObject(payload);
-            foreach (var sub in _notificationManager.GetPushSubscriptionList())
+            foreach (var sub in _notificationManager.GetPushSubscriptionList(appId))
             {
                 webPushClient.SendNotification(sub, notificationContent, vapidDetails);
             }
