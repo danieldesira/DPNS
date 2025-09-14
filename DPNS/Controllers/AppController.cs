@@ -1,7 +1,5 @@
 ﻿using DPNS.Managers;
 using DPNS.Models;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 
 namespace DPNS.Controllers

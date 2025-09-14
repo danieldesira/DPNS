@@ -34,6 +34,7 @@ builder.Services.AddTransient<INotificationRepository, NotificationRepository>()
 builder.Services.AddTransient<INotificationManager, NotificationManager>();
 builder.Services.AddTransient<IAppRepository, AppRepository>();
 builder.Services.AddTransient<IAppManager, AppManager>();
+builder.Services.AddSingleton<IWebPushClient, WebPushClient>();
 
 builder.Services.AddCors(options => options.AddPolicy("Origins",
     policy => policy.WithOrigins("https://localhost:5173", "https://turtle-quest.vercel.app/")

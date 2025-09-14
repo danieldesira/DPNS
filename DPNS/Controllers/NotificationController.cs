@@ -10,19 +10,11 @@ namespace DPNS.Controllers
     [ApiController]
     public class NotificationController : ControllerBase
     {
-        private readonly IAppManager _appManager;
         private readonly INotificationManager _notificationManager;
-        private readonly IConfiguration _configuration;
 
-        public NotificationController(
-            IAppManager appManager,
-            INotificationManager notificationManager,
-            IConfiguration configuration
-        )
+        public NotificationController(INotificationManager notificationManager)
         {
-            _appManager = appManager;
             _notificationManager = notificationManager;
-            _configuration = configuration;
         }
 
         [HttpPost]
@@ -30,18 +22,8 @@ namespace DPNS.Controllers
         {
             _notificationManager.AddNotification(payload.Title, payload.Text, appId);
 
-            WebPushClient webPushClient = new();
-            VapidDetails vapidDetails = new(
-                "mailto:desiradaniel2007@gmail.com",
-                _configuration["PublicWebPushKey"],
-                _configuration["PrivateWebPushKey"]
-            );
-            
-            string notificationContent = JsonConvert.SerializeObject(payload);
-            foreach (var sub in _notificationManager.GetPushSubscriptionList(appId))
-            {
-                webPushClient.SendNotification(sub, notificationContent, vapidDetails);
-            }
+            var subscriptionList = _notificationManager.GetPushSubscriptionList(appId);
+            _notificationManager.SendNotification(payload.Title, payload.Text, subscriptionList);
 
             return Results.Ok(new { Message = "Notification sent successfully" });
         }
