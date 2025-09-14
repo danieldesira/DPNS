@@ -9,20 +9,20 @@ namespace DPNS.Repositories
 
     public class NotificationRepository : INotificationRepository
     {
-        private readonly NeondbContext dbContext;
+        private readonly NeondbContext _dbContext;
 
-        public NotificationRepository(NeondbContext dbContext) => this.dbContext = dbContext;
+        public NotificationRepository(NeondbContext dbContext) => _dbContext = dbContext;
 
         public void AddNotification(string title, string text, string appUrl)
         {
-            dbContext.PushNotifications.Add(new PushNotification
+            _dbContext.PushNotifications.Add(new PushNotification
             {
                 Title = title,
                 Text = text,
                 AppUrl = appUrl,
                 CreatedAt = DateTime.UtcNow,
             });
-            dbContext.SaveChanges();
+            _dbContext.SaveChanges();
         }
     }
 }

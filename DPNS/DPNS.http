@@ -30,8 +30,8 @@ Accept: application/json
 Content-Type: application/json
 
 {
-  "title": "test",
-  "text": "This is a test notification!"
+  "title": "test turtle",
+  "text": "turtles are super cute!!"
 }
 
 ###

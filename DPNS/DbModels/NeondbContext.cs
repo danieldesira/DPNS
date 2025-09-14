@@ -21,6 +21,8 @@ public partial class NeondbContext : DbContext
 
     public virtual DbSet<PushSubscription> PushSubscriptions { get; set; }
 
+    public virtual DbSet<User> Users { get; set; }
+
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         => optionsBuilder.UseNpgsql("Name=DefaultConnection");
 
@@ -95,6 +97,33 @@ public partial class NeondbContext : DbContext
                 .HasForeignKey(d => d.AppId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("push_subscriptions_apps_fk");
+        });
+
+        modelBuilder.Entity<User>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("users_pk");
+
+            entity.ToTable("users");
+
+            entity.HasIndex(e => e.Email, "users_unique").IsUnique();
+
+            entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.CreatedAt)
+                .HasColumnType("time with time zone")
+                .HasColumnName("created_at");
+            entity.Property(e => e.Email)
+                .HasColumnType("character varying")
+                .HasColumnName("email");
+            entity.Property(e => e.LastLoginAt)
+                .HasColumnType("time with time zone")
+                .HasColumnName("last_login_at");
+            entity.Property(e => e.Name)
+                .HasColumnType("character varying")
+                .HasColumnName("name");
+            entity.Property(e => e.Password)
+                .HasColumnType("character varying")
+                .HasColumnName("password");
+            entity.Property(e => e.VerifiedAt).HasColumnName("verified_at");
         });
 
         OnModelCreatingPartial(modelBuilder);

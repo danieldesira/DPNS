@@ -1,8 +1,6 @@
 ﻿using DPNS.Managers;
 using DPNS.Models;
 using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json;
-using WebPush;
 
 namespace DPNS.Controllers
 {
