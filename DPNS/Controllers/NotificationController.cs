@@ -12,14 +12,17 @@ namespace DPNS.Controllers
     {
         private readonly IAppManager _appManager;
         private readonly INotificationManager _notificationManager;
+        private readonly IConfiguration _configuration;
 
         public NotificationController(
             IAppManager appManager,
-            INotificationManager notificationManager
+            INotificationManager notificationManager,
+            IConfiguration configuration
         )
         {
             _appManager = appManager;
             _notificationManager = notificationManager;
+            _configuration = configuration;
         }
 
         [HttpPost]
@@ -27,10 +30,12 @@ namespace DPNS.Controllers
         {
             _notificationManager.AddNotification(payload.Title, payload.Text, appId);
 
-            var app = _appManager.GetApp(appId);
-
             WebPushClient webPushClient = new();
-            VapidDetails vapidDetails = new(app.Url, app.PublicKey, app.PrivateKey);
+            VapidDetails vapidDetails = new(
+                "mailto:desiradaniel2007@gmail.com",
+                _configuration["PublicWebPushKey"],
+                _configuration["PrivateWebPushKey"]
+            );
             
             string notificationContent = JsonConvert.SerializeObject(payload);
             foreach (var sub in _notificationManager.GetPushSubscriptionList(appId))

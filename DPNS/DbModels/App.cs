@@ -13,10 +13,6 @@ public partial class App
 
     public DateTimeOffset CreatedAt { get; set; }
 
-    public string PublicKey { get; set; } = null!;
-
-    public string PrivateKey { get; set; } = null!;
-
     public string Url { get; set; } = null!;
 
     public virtual ICollection<PushSubscription> PushSubscriptions { get; set; } = new List<PushSubscription>();

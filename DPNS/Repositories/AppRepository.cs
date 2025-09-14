@@ -4,7 +4,7 @@ namespace DPNS.Repositories
 {
     public interface IAppRepository
     {
-        void AddApp(string name, string url, string publicKey, string privateKey);
+        void AddApp(string name, string url);
         App? GetApp(Guid guid);
         App? GetApp(string name, string url);
     }
@@ -15,14 +15,12 @@ namespace DPNS.Repositories
 
         public AppRepository(NeondbContext dbContext) => _dbContext = dbContext;
 
-        public void AddApp(string name, string url, string publicKey, string privateKey)
+        public void AddApp(string name, string url)
         {
             _dbContext.Apps.Add(new App
             {
                 AppName = name,
                 Url = url,
-                PublicKey = publicKey,
-                PrivateKey = privateKey,
                 Guid = Guid.NewGuid(),
                 CreatedAt = DateTime.UtcNow,
             });

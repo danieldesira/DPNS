@@ -1,13 +1,12 @@
 ﻿using DPNS.DbModels;
 using DPNS.Repositories;
-using WebPush;
 
 namespace DPNS.Managers
 {
     public interface IAppManager
     {
-        public void AddApp(string appName, string url);
-        public App GetApp(Guid guid);
+        void AddApp(string appName, string url);
+        App GetApp(Guid guid);
     }
 
     public class AppManager : IAppManager
@@ -26,19 +25,13 @@ namespace DPNS.Managers
                 throw new InvalidOperationException("Project name already exists");
             }
 
-            VapidDetails vapidDetails = VapidHelper.GenerateVapidKeys();
-
-            _appRepository.AddApp(appName, url, vapidDetails.PublicKey, vapidDetails.PrivateKey);
+            _appRepository.AddApp(appName, url);
         }
 
         public App GetApp(Guid guid)
         {
             var app = _appRepository.GetApp(guid);
-            if (app == null)
-            {
-                throw new InvalidOperationException("App not found");
-            }
-            return app;
+            return app ?? throw new InvalidOperationException("App not found");
         }
     }
 }

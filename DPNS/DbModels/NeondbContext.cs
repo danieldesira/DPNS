@@ -44,12 +44,6 @@ public partial class NeondbContext : DbContext
                 .HasColumnType("time with time zone")
                 .HasColumnName("created_at");
             entity.Property(e => e.Guid).HasColumnName("guid");
-            entity.Property(e => e.PrivateKey)
-                .HasColumnType("character varying")
-                .HasColumnName("private_key");
-            entity.Property(e => e.PublicKey)
-                .HasColumnType("character varying")
-                .HasColumnName("public_key");
             entity.Property(e => e.Url)
                 .HasColumnType("character varying")
                 .HasColumnName("url");
