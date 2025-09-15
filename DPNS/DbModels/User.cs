@@ -18,4 +18,6 @@ public partial class User
     public DateTimeOffset? LastLoginAt { get; set; }
 
     public DateTime? VerifiedAt { get; set; }
+
+    public virtual ICollection<UserVerificationToken> UserVerificationTokens { get; set; } = new List<UserVerificationToken>();
 }

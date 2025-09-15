@@ -1,5 +1,27 @@
 @DPNS_HostAddress = http://localhost:32768
 
+POST {{DPNS_HostAddress}}/api/auth/register
+Accept: application/json
+Content-Type: application/json
+
+{
+  "name": "Daniel Desira",
+  "email": "desiradaniel2007@gmail.com",
+  "password": "123456"
+}
+
+###
+
+POST {{DPNS_HostAddress}}/api/auth/verify-email
+Accept: application/json
+Content-Type: application/json
+
+{
+  "verificationCode": "Sf6HiIhhFUqx/nwrrXlekQ=="
+}
+
+###
+
 POST {{DPNS_HostAddress}}/api/project/
 Accept: application/json
 Content-Type: application/json

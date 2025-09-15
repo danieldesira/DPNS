@@ -3,7 +3,10 @@ using DPNS.DbModels;
 using DPNS.Managers;
 using DPNS.Repositories;
 using Enyim.Caching.Configuration;
+using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.EntityFrameworkCore;
+using Org.BouncyCastle.Asn1.Smime;
+using System.Net.Mail;
 using WebPush;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -34,6 +37,9 @@ builder.Services.AddTransient<INotificationRepository, NotificationRepository>()
 builder.Services.AddTransient<INotificationManager, NotificationManager>();
 builder.Services.AddTransient<IAppRepository, AppRepository>();
 builder.Services.AddTransient<IAppManager, AppManager>();
+builder.Services.AddTransient<IUserRepository, UserRepository>();
+builder.Services.AddTransient<IUserManager, UserManager>();
+
 builder.Services.AddSingleton<IWebPushClient, WebPushClient>();
 
 builder.Services.AddCors(options => options.AddPolicy("Origins",

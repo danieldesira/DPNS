@@ -23,6 +23,8 @@ public partial class NeondbContext : DbContext
 
     public virtual DbSet<User> Users { get; set; }
 
+    public virtual DbSet<UserVerificationToken> UserVerificationTokens { get; set; }
+
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         => optionsBuilder.UseNpgsql("Name=DefaultConnection");
 
@@ -124,6 +126,26 @@ public partial class NeondbContext : DbContext
                 .HasColumnType("character varying")
                 .HasColumnName("password");
             entity.Property(e => e.VerifiedAt).HasColumnName("verified_at");
+        });
+
+        modelBuilder.Entity<UserVerificationToken>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("user_verification_tokens_pk");
+
+            entity.ToTable("user_verification_tokens");
+
+            entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.CreatedAt).HasColumnName("created_at");
+            entity.Property(e => e.ExpiresAt).HasColumnName("expires_at");
+            entity.Property(e => e.UserId).HasColumnName("user_id");
+            entity.Property(e => e.VerificationCode)
+                .HasColumnType("character varying")
+                .HasColumnName("verification_code");
+
+            entity.HasOne(d => d.User).WithMany(p => p.UserVerificationTokens)
+                .HasForeignKey(d => d.UserId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("user_verification_tokens_users_fk");
         });
 
         OnModelCreatingPartial(modelBuilder);
