@@ -13,13 +13,13 @@ namespace DPNS.Repositories
 
     public class SubscriptionRepository : ISubscriptionRepository
     {
-        private readonly NeondbContext dbContext;
+        private readonly NeondbContext _dbContext;
 
-        public SubscriptionRepository(NeondbContext dbContext) => this.dbContext = dbContext;
+        public SubscriptionRepository(NeondbContext dbContext) => _dbContext = dbContext;
 
         public void AddSubscription(string endpoint, string p256dh, string auth, int appId)
         {
-            dbContext.PushSubscriptions.Add(new PushSubscription
+            _dbContext.PushSubscriptions.Add(new PushSubscription
             {
                 Auth = auth,
                 P256dh = p256dh,
@@ -27,17 +27,17 @@ namespace DPNS.Repositories
                 AppId = appId,
                 CreatedAt = DateTime.UtcNow,
             });
-            dbContext.SaveChanges();
+            _dbContext.SaveChanges();
         }
 
         public IList<PushSubscription> GetSubscriptions(int appId)
         {
-            return [.. dbContext.PushSubscriptions.Where(s => s.AppId == appId)];
+            return [.. _dbContext.PushSubscriptions.Where(s => s.AppId == appId)];
         }
 
         public PushSubscription? GetSubscription(string endpoint, string p256dh, string auth)
         {
-            return dbContext.PushSubscriptions
+            return _dbContext.PushSubscriptions
                     .FirstOrDefault(s => s.Endpoint == endpoint && s.P256dh == p256dh && s.Auth == auth);
         }
     }

@@ -19,5 +19,7 @@ public partial class User
 
     public DateTime? VerifiedAt { get; set; }
 
+    public virtual ICollection<AppUser> AppUsers { get; set; } = new List<AppUser>();
+
     public virtual ICollection<UserVerificationToken> UserVerificationTokens { get; set; } = new List<UserVerificationToken>();
 }

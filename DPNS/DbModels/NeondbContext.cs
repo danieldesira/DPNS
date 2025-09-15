@@ -17,6 +17,8 @@ public partial class NeondbContext : DbContext
 
     public virtual DbSet<App> Apps { get; set; }
 
+    public virtual DbSet<AppUser> AppUsers { get; set; }
+
     public virtual DbSet<PushNotification> PushNotifications { get; set; }
 
     public virtual DbSet<PushSubscription> PushSubscriptions { get; set; }
@@ -51,6 +53,28 @@ public partial class NeondbContext : DbContext
             entity.Property(e => e.Url)
                 .HasColumnType("character varying")
                 .HasColumnName("url");
+        });
+
+        modelBuilder.Entity<AppUser>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("project_users_pk");
+
+            entity.ToTable("app_users");
+
+            entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.AppId).HasColumnName("app_id");
+            entity.Property(e => e.CreatedAt).HasColumnName("created_at");
+            entity.Property(e => e.UserId).HasColumnName("user_id");
+
+            entity.HasOne(d => d.App).WithMany(p => p.AppUsers)
+                .HasForeignKey(d => d.AppId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("app_users_apps_fk");
+
+            entity.HasOne(d => d.User).WithMany(p => p.AppUsers)
+                .HasForeignKey(d => d.UserId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("app_users_users_fk");
         });
 
         modelBuilder.Entity<PushNotification>(entity =>

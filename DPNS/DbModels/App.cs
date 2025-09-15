@@ -15,5 +15,7 @@ public partial class App
 
     public string Url { get; set; } = null!;
 
+    public virtual ICollection<AppUser> AppUsers { get; set; } = new List<AppUser>();
+
     public virtual ICollection<PushSubscription> PushSubscriptions { get; set; } = new List<PushSubscription>();
 }

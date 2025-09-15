@@ -1,7 +1,6 @@
 ﻿using DPNS.Managers;
 using DPNS.Models;
 using Microsoft.AspNetCore.Mvc;
-using System.Net;
 
 namespace DPNS.Controllers
 {
