@@ -44,5 +44,19 @@ namespace DPNS.Controllers
 
             return Results.Ok(new { Message = "Email verified successfully" });
         }
+
+        [HttpPost("login")]
+        public IResult Login([FromBody] LoginRequest payload)
+        {
+            try
+            {
+                string token = _authenticationManager.Login(payload.Email, payload.Password);
+                return Results.Ok(new { token });
+            }
+            catch (InvalidOperationException)
+            {
+                return Results.Unauthorized();
+            }
+        }
     }
 }

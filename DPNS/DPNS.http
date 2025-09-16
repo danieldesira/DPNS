@@ -22,6 +22,17 @@ Content-Type: application/json
 
 ###
 
+POST {{DPNS_HostAddress}}/api/auth/login
+Accept: application/json
+Content-Type: application/json
+
+{
+  "email": "desiradaniel2007@gmail.com",
+  "password": "123456"
+}
+
+###
+
 POST {{DPNS_HostAddress}}/api/project/
 Accept: application/json
 Content-Type: application/json
