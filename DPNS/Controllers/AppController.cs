@@ -1,5 +1,6 @@
 ﻿using DPNS.Managers;
 using DPNS.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace DPNS.Controllers
@@ -12,7 +13,7 @@ namespace DPNS.Controllers
 
         public AppController(IAppManager appManager) => _appManager = appManager;
 
-        [HttpPost]
+        [HttpPost, Authorize]
         public IResult CreateApp([FromBody] App payload)
         {
             try

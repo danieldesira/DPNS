@@ -3,10 +3,10 @@ using DPNS.DbModels;
 using DPNS.Managers;
 using DPNS.Repositories;
 using Enyim.Caching.Configuration;
-using Microsoft.AspNetCore.Identity.UI.Services;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
-using Org.BouncyCastle.Asn1.Smime;
-using System.Net.Mail;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 using WebPush;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -47,6 +47,35 @@ builder.Services.AddCors(options => options.AddPolicy("Origins",
                 .AllowAnyHeader()
                 .AllowAnyMethod()));
 
+// Validate presence of required JWT config early and use it
+var jwtKey = builder.Configuration["Jwt:Key"];
+if (string.IsNullOrWhiteSpace(jwtKey))
+{
+    throw new InvalidOperationException("Configuration 'Jwt:Key' is missing or empty. Set Jwt:Key in appsettings.json or as an environment variable.");
+}
+
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+})
+.AddJwtBearer(options =>
+{
+    options.RequireHttpsMetadata = false;
+    options.SaveToken = true;
+    options.TokenValidationParameters = new TokenValidationParameters
+    {
+        ValidateIssuer = true,
+        ValidateAudience = true,
+        ValidateLifetime = true,
+        ValidateIssuerSigningKey = true,
+        ValidIssuer = builder.Configuration["Jwt:Issuer"],
+        ValidAudience = builder.Configuration["Jwt:Audience"],
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey))
+    };
+});
+
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -59,6 +88,7 @@ app.UseCors("Origins");
 
 app.UseHttpsRedirection();
 
+app.UseAuthentication(); // <--- MUST be before UseAuthorization
 app.UseAuthorization();
 
 app.MapControllers();
