@@ -1,6 +1,7 @@
 @DPNS_HostAddress = http://localhost:32768
-@JWT_TOKEN=""
+@authToken = 
 
+# @name registration
 POST {{DPNS_HostAddress}}/api/auth/register
 Accept: application/json
 Content-Type: application/json
@@ -21,9 +22,9 @@ Content-Type: application/json
   "verificationCode": "Sf6HiIhhFUqx/nwrrXlekQ=="
 }
 
-###
+### 
 
-# @name login
+# @name Login
 POST {{DPNS_HostAddress}}/api/auth/login
 Accept: application/json
 Content-Type: application/json
@@ -35,10 +36,14 @@ Content-Type: application/json
 
 ###
 
+@authToken = {{Login.response.body.$.token}}
+
+###
+
 POST {{DPNS_HostAddress}}/api/app/
 Accept: application/json
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJkZXNpcmFkYW5pZWwyMDA3QGdtYWlsLmNvbSIsImp0aSI6IjZmMWVhOWI1LTM4YjUtNDM4Zi05NjY3LWU2YjFmNWM4ZjZkOCIsImV4cCI6MTc1ODQwMTY0OCwiaXNzIjoiZHBucy5uZXQiLCJhdWQiOiJkcG5zLm5ldCJ9.vdrtqypC5Ug2Pk3D-X6rsCEnUyRNrW_H70x0Fc-PleA
+Authorization: Bearer {{authToken}}
 
 {
   "appName": "Turtle Quest",
@@ -64,6 +69,7 @@ Content-Type: application/json
 POST {{DPNS_HostAddress}}/api/notification/?appid=65033d73-3cdc-416d-9689-1b0b3e73cbad
 Accept: application/json
 Content-Type: application/json
+Authorization: Bearer {{authToken}}
 
 {
   "title": "test turtle",

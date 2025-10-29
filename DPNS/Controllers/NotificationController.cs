@@ -1,5 +1,6 @@
 ﻿using DPNS.Managers;
 using DPNS.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace DPNS.Controllers
@@ -15,7 +16,7 @@ namespace DPNS.Controllers
             _notificationManager = notificationManager;
         }
 
-        [HttpPost]
+        [HttpPost, Authorize]
         public IResult SendNotification([FromBody] Notification payload, [FromQuery(Name = "appId")] Guid appId)
         {
             _notificationManager.AddNotification(payload.Title, payload.Text, appId);
