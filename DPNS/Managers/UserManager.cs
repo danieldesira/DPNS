@@ -16,20 +16,11 @@ namespace DPNS.Managers
         string Login(string email, string password);
     }
 
-    public class UserManager : IUserManager
+    public class UserManager(IUserRepository userRepository, IConfiguration configuration) : IUserManager
     {
-        private readonly IUserRepository _userRepository;
-        private readonly IConfiguration _configuration;
-
-        public UserManager(IUserRepository userRepository, IConfiguration configuration)
-        {
-            _userRepository = userRepository;
-            _configuration = configuration;
-        }
-
         public void RegisterUser(User user)
         {
-            if (_userRepository.GetUser(user.Email) != null)
+            if (userRepository.GetUser(user.Email) != null)
             {
                 throw new InvalidOperationException("User with this email already exists");
             }
@@ -37,9 +28,9 @@ namespace DPNS.Managers
             var passwordHasher = new PasswordHasher<User>();
             string hash = passwordHasher.HashPassword(user, user.Password);
 
-            int userId = _userRepository.AddUser(user.Name, user.Email, hash);
+            int userId = userRepository.AddUser(user.Name, user.Email, hash);
 
-            _userRepository.CreateVerificationToken(userId);
+            userRepository.CreateVerificationToken(userId);
 
             SmtpClient smtpClient = new();
             smtpClient.Send(new MailMessage(
@@ -53,19 +44,19 @@ namespace DPNS.Managers
 
         public void VerifyEmail(string token)
         {
-            var verificationToken = _userRepository.GetUserVerificationToken(token);
+            var verificationToken = userRepository.GetUserVerificationToken(token);
             if (verificationToken == null || verificationToken.ExpiresAt < DateTime.UtcNow)
             {
                 throw new InvalidOperationException("Invalid or expired verification token");
             }
 
-            _userRepository.VerifyEmail(verificationToken.UserId);
-            _userRepository.DeleteVerificationToken(verificationToken.UserId);
+            userRepository.VerifyEmail(verificationToken.UserId);
+            userRepository.DeleteVerificationToken(verificationToken.UserId);
         }
 
         public string Login(string email, string password)
         {
-            var user = _userRepository.GetUser(email);
+            var user = userRepository.GetUser(email);
             if (user == null || user.VerifiedAt == null)
             {
                 throw new InvalidOperationException("Invalid email or email not verified");
@@ -81,7 +72,7 @@ namespace DPNS.Managers
 
         private string GenerateJwtToken(string email)
         {
-            var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"] ?? ""));
+            var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["Jwt:Key"] ?? ""));
             var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
 
             var claims = new[]
@@ -91,8 +82,8 @@ namespace DPNS.Managers
             };
 
             var token = new JwtSecurityToken(
-                issuer: _configuration["Jwt:Issuer"],
-                audience: _configuration["Jwt:Audience"],
+                issuer: configuration["Jwt:Issuer"],
+                audience: configuration["Jwt:Audience"],
                 claims: claims,
                 expires: DateTime.Now.AddHours(1),
                 signingCredentials: credentials

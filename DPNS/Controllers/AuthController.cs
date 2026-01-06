@@ -6,21 +6,15 @@ namespace DPNS.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class AuthController : ControllerBase
+    public class AuthController(IUserManager authenticationManager) : ControllerBase
     {
-        private readonly IUserManager _authenticationManager;
-
-        public AuthController(IUserManager authenticationManager)
-        {
-            _authenticationManager = authenticationManager;
-        }
 
         [HttpPost("register")]
         public IResult RegisterUser([FromBody] User payload)
         {
             try
             {
-                _authenticationManager.RegisterUser(payload);
+                authenticationManager.RegisterUser(payload);
             }
             catch (InvalidOperationException e)
             {
@@ -35,7 +29,7 @@ namespace DPNS.Controllers
         {
             try
             {
-                _authenticationManager.VerifyEmail(payload.VerificationCode);
+                authenticationManager.VerifyEmail(payload.VerificationCode);
             }
             catch (InvalidOperationException e)
             {
@@ -50,7 +44,7 @@ namespace DPNS.Controllers
         {
             try
             {
-                string token = _authenticationManager.Login(payload.Email, payload.Password);
+                string token = authenticationManager.Login(payload.Email, payload.Password);
                 return Results.Ok(new { token });
             }
             catch (InvalidOperationException)

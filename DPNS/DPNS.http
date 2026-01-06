@@ -1,4 +1,4 @@
-@DPNS_HostAddress = http://localhost:32768
+@DPNS_HostAddress = http://localhost:32769
 @authToken = 
 
 # @name registration

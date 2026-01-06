@@ -32,13 +32,13 @@ builder.Services.AddSingleton<ICacheRepository, CacheRepository>();
 builder.Services.AddDbContext<NeondbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-builder.Services.AddTransient<ISubscriptionRepository, SubscriptionRepository>();
-builder.Services.AddTransient<INotificationRepository, NotificationRepository>();
-builder.Services.AddTransient<INotificationManager, NotificationManager>();
-builder.Services.AddTransient<IAppRepository, AppRepository>();
-builder.Services.AddTransient<IAppManager, AppManager>();
-builder.Services.AddTransient<IUserRepository, UserRepository>();
-builder.Services.AddTransient<IUserManager, UserManager>();
+builder.Services.AddScoped<ISubscriptionRepository, SubscriptionRepository>();
+builder.Services.AddScoped<INotificationRepository, NotificationRepository>();
+builder.Services.AddScoped<INotificationManager, NotificationManager>();
+builder.Services.AddScoped<IAppRepository, AppRepository>();
+builder.Services.AddScoped<IAppManager, AppManager>();
+builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<IUserManager, UserManager>();
 
 builder.Services.AddSingleton<IWebPushClient, WebPushClient>();
 

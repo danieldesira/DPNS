@@ -9,32 +9,28 @@ namespace DPNS.Repositories
         App? GetApp(string name, string url);
     }
 
-    public class AppRepository : IAppRepository
+    public class AppRepository(NeondbContext dbContext) : IAppRepository
     {
-        private readonly NeondbContext _dbContext;
-
-        public AppRepository(NeondbContext dbContext) => _dbContext = dbContext;
-
         public void AddApp(string name, string url)
         {
-            _dbContext.Apps.Add(new App
+            dbContext.Apps.Add(new App
             {
                 AppName = name,
                 Url = url,
                 Guid = Guid.NewGuid(),
                 CreatedAt = DateTime.UtcNow,
             });
-            _dbContext.SaveChanges();
+            dbContext.SaveChanges();
         }
 
         public App? GetApp(Guid guid)
         {
-            return _dbContext.Apps.FirstOrDefault(p => p.Guid == guid);
+            return dbContext.Apps.FirstOrDefault(p => p.Guid == guid);
         }
 
         public App? GetApp(string name, string url)
         {
-            return _dbContext.Apps.FirstOrDefault(p => p.AppName == name || p.Url == url);
+            return dbContext.Apps.FirstOrDefault(p => p.AppName == name || p.Url == url);
         }
     }
 }

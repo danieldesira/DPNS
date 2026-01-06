@@ -7,22 +7,15 @@ namespace DPNS.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class NotificationController : ControllerBase
+    public class NotificationController(INotificationManager notificationManager) : ControllerBase
     {
-        private readonly INotificationManager _notificationManager;
-
-        public NotificationController(INotificationManager notificationManager)
-        {
-            _notificationManager = notificationManager;
-        }
-
         [HttpPost, Authorize]
         public IResult SendNotification([FromBody] Notification payload, [FromQuery(Name = "appId")] Guid appId)
         {
-            _notificationManager.AddNotification(payload.Title, payload.Text, appId);
+            notificationManager.AddNotification(payload.Title, payload.Text, appId);
 
-            var subscriptionList = _notificationManager.GetPushSubscriptionList(appId);
-            _notificationManager.SendNotification(payload.Title, payload.Text, subscriptionList);
+            var subscriptionList = notificationManager.GetPushSubscriptionList(appId);
+            notificationManager.SendNotification(payload.Title, payload.Text, subscriptionList);
 
             return Results.Ok(new { Message = "Notification sent successfully" });
         }

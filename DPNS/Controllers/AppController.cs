@@ -7,18 +7,14 @@ namespace DPNS.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class AppController : ControllerBase
+    public class AppController(IAppManager appManager) : ControllerBase
     {
-        private readonly IAppManager _appManager;
-
-        public AppController(IAppManager appManager) => _appManager = appManager;
-
         [HttpPost, Authorize]
         public IResult CreateApp([FromBody] App payload)
         {
             try
             {
-                _appManager.AddApp(payload.AppName, payload.Url);
+                appManager.AddApp(payload.AppName, payload.Url);
             }
             catch (InvalidOperationException e)
             {
