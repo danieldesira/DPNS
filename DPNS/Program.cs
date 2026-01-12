@@ -1,8 +1,6 @@
-using DPNS.Caching;
 using DPNS.DbModels;
 using DPNS.Managers;
 using DPNS.Repositories;
-using Enyim.Caching.Configuration;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -18,16 +16,6 @@ builder.Services.AddControllers();
 builder.Services.AddOpenApi();
 
 builder.Services.AddLogging();
-builder.Services.AddEnyimMemcached(options => options.Servers = [
-    new Server
-    {
-        Address = builder.Configuration["MemCachedHost"],
-        Port = Convert.ToInt32(builder.Configuration["MemCachedPort"])
-    }
-]);
-
-builder.Services.AddSingleton<ICacheProvider, CacheProvider>();
-builder.Services.AddSingleton<ICacheRepository, CacheRepository>();
 
 builder.Services.AddDbContext<NeondbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
@@ -43,7 +31,11 @@ builder.Services.AddScoped<IUserManager, UserManager>();
 builder.Services.AddSingleton<IWebPushClient, WebPushClient>();
 
 builder.Services.AddCors(options => options.AddPolicy("Origins",
-    policy => policy.WithOrigins("https://localhost:5173", "https://turtle-quest.vercel.app/")
+    policy => policy.WithOrigins(
+                    "https://localhost:5173",
+                    "https://turtle-quest.vercel.app", 
+                    "https://subnodulous-kaelyn-matrimonially.ngrok-free.dev"
+                )
                 .AllowAnyHeader()
                 .AllowAnyMethod()));
 
@@ -86,7 +78,10 @@ if (app.Environment.IsDevelopment())
 
 app.UseCors("Origins");
 
-app.UseHttpsRedirection();
+if (!app.Environment.IsDevelopment())
+{ 
+    app.UseHttpsRedirection();
+}
 
 app.UseAuthentication(); // <--- MUST be before UseAuthorization
 app.UseAuthorization();
