@@ -1,4 +1,4 @@
-using DPNS.DbModels;
+using DPNS.Entities;
 using DPNS.Managers;
 using DPNS.Repositories;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -17,7 +17,7 @@ builder.Services.AddOpenApi();
 
 builder.Services.AddLogging();
 
-builder.Services.AddDbContext<NeondbContext>(options =>
+builder.Services.AddDbContext<DpnsDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 builder.Services.AddScoped<ISubscriptionRepository, SubscriptionRepository>();

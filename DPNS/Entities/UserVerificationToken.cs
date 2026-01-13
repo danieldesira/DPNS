@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace DPNS.DbModels;
+namespace DPNS.Entities;
 
 public partial class UserVerificationToken
 {

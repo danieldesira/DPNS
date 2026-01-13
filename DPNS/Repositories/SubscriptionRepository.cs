@@ -1,4 +1,4 @@
-﻿using DPNS.DbModels;
+﻿using DPNS.Entities;
 
 namespace DPNS.Repositories
 {
@@ -10,7 +10,7 @@ namespace DPNS.Repositories
     }
 
 
-    public class SubscriptionRepository(NeondbContext dbContext) : ISubscriptionRepository
+    public class SubscriptionRepository(DpnsDbContext dbContext) : ISubscriptionRepository
     {
         public void AddSubscription(string endpoint, string p256dh, string auth, int appId)
         {

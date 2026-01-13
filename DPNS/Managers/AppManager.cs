@@ -1,4 +1,4 @@
-﻿using DPNS.DbModels;
+﻿using DPNS.Entities;
 using DPNS.Repositories;
 
 namespace DPNS.Managers

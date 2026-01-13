@@ -1,4 +1,4 @@
-﻿using DPNS.DbModels;
+﻿using DPNS.Entities;
 
 namespace DPNS.Repositories
 {
@@ -12,7 +12,7 @@ namespace DPNS.Repositories
         void DeleteVerificationToken(int userId);
     }
 
-    public class UserRepository(NeondbContext dbContext) : IUserRepository
+    public class UserRepository(DpnsDbContext dbContext) : IUserRepository
     {
         public int AddUser(string name, string email, string password)
         {

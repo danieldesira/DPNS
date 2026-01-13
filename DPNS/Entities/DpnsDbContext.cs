@@ -2,15 +2,15 @@
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
 
-namespace DPNS.DbModels;
+namespace DPNS.Entities;
 
-public partial class NeondbContext : DbContext
+public partial class DpnsDbContext : DbContext
 {
-    public NeondbContext()
+    public DpnsDbContext()
     {
     }
 
-    public NeondbContext(DbContextOptions<NeondbContext> options)
+    public DpnsDbContext(DbContextOptions<DpnsDbContext> options)
         : base(options)
     {
     }

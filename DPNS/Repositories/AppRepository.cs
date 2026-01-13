@@ -1,4 +1,4 @@
-﻿using DPNS.DbModels;
+﻿using DPNS.Entities;
 
 namespace DPNS.Repositories
 {
@@ -9,7 +9,7 @@ namespace DPNS.Repositories
         App? GetApp(string name, string url);
     }
 
-    public class AppRepository(NeondbContext dbContext) : IAppRepository
+    public class AppRepository(DpnsDbContext dbContext) : IAppRepository
     {
         public void AddApp(string name, string url)
         {

@@ -1,4 +1,4 @@
-﻿using DPNS.DbModels;
+﻿using DPNS.Entities;
 
 namespace DPNS.Repositories
 {
@@ -7,7 +7,7 @@ namespace DPNS.Repositories
         public void AddNotification(string title, string text, string appUrl);
     }
 
-    public class NotificationRepository(NeondbContext dbContext) : INotificationRepository
+    public class NotificationRepository(DpnsDbContext dbContext) : INotificationRepository
     {
         public void AddNotification(string title, string text, string appUrl)
         {
