@@ -19,7 +19,7 @@ Accept: application/json
 Content-Type: application/json
 
 {
-  "verificationCode": "Sf6HiIhhFUqx/nwrrXlekQ=="
+  "verificationCode": "ZMIzzcMBF0SZkeRgR/K2Fw=="
 }
 
 ### 
@@ -52,7 +52,7 @@ Authorization: Bearer {{authToken}}
 
 ###
 
-POST {{DPNS_HostAddress}}/api/subscription/?appId=65033d73-3cdc-416d-9689-1b0b3e73cbad
+POST {{DPNS_HostAddress}}/api/subscription/?appId=fe24b4fa-004b-44fb-ac30-9fdb487246c0
 Accept: application/json
 Content-Type: application/json
 
@@ -66,7 +66,7 @@ Content-Type: application/json
 
 ###
 
-POST {{DPNS_HostAddress}}/api/notification/?appid=65033d73-3cdc-416d-9689-1b0b3e73cbad
+POST {{DPNS_HostAddress}}/api/notification/?appid=fe24b4fa-004b-44fb-ac30-9fdb487246c0
 Accept: application/json
 Content-Type: application/json
 Authorization: Bearer {{authToken}}
