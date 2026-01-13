@@ -83,6 +83,17 @@ if (!app.Environment.IsDevelopment())
     app.UseHttpsRedirection();
 }
 
+app.Use(async (context, next) =>
+{
+    if (context.Request.Method == HttpMethods.Options)
+    {
+        context.Response.StatusCode = StatusCodes.Status200OK;
+        return;
+    }
+
+    await next();
+});
+
 app.UseAuthentication(); // <--- MUST be before UseAuthorization
 app.UseAuthorization();
 

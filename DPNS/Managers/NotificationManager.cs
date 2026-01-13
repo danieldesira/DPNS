@@ -73,7 +73,7 @@ namespace DPNS.Managers
             string notificationContent = JsonConvert.SerializeObject(new
             {
                 title,
-                text,
+                body = text,
             });
             foreach (var sub in pushSubscriptions)
             {

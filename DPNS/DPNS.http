@@ -1,4 +1,4 @@
-@DPNS_HostAddress = http://localhost:32769
+@DPNS_HostAddress = https://subnodulous-kaelyn-matrimonially.ngrok-free.dev
 @authToken = 
 
 # @name registration
