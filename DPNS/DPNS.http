@@ -83,3 +83,9 @@ Content-Type: application/json
 Authorization: Bearer {{authToken}}
 
 ###
+
+GET {{DPNS_HostAddress}}/api/app/subscription-count/2
+Content-Type: application/json
+Authorization: Bearer {{authToken}}
+
+###

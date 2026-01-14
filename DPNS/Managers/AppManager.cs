@@ -8,9 +8,10 @@ namespace DPNS.Managers
         Task AddApp(string appName, string url);
         Task<App> GetApp(Guid guid);
         Task<IList<App>> GetUserApps(int userId);
+        Task<int> GetSubscriptionCount(int userId);
     }
 
-    public class AppManager(IAppRepository appRepository) : IAppManager
+    public class AppManager(IAppRepository appRepository, ISubscriptionRepository subscriptionRepository) : IAppManager
     {
         public async Task AddApp(string appName, string url)
         {
@@ -31,6 +32,12 @@ namespace DPNS.Managers
         public async Task<IList<App>> GetUserApps(int userId)
         {
             return await appRepository.GetUserApps(userId);
+        }
+
+        public async Task<int> GetSubscriptionCount(int appId)
+        {
+            var apps = await subscriptionRepository.GetSubscriptions(appId);
+            return apps.Count;
         }
     }
 }

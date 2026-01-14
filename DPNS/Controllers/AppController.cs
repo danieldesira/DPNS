@@ -25,7 +25,7 @@ namespace DPNS.Controllers
         }
 
         [HttpGet, Authorize]
-        public async Task<IResult> GetUserAppsAsync()
+        public async Task<IResult> GetUserApps()
         {
             var userIdClaim = User.Claims.FirstOrDefault(c => c.Type == "userId");
             if (userIdClaim == null || !int.TryParse(userIdClaim.Value, out int userId))
@@ -34,6 +34,14 @@ namespace DPNS.Controllers
             }
             var apps = await appManager.GetUserApps(userId);
             return Results.Ok(apps);
+        }
+
+        [HttpGet("subscription-count/{appId}")]
+        [Authorize]
+        public async Task<IResult> GetSubscriptionCount([FromRoute] int appId)
+        {
+            var subscriptionCount = await appManager.GetSubscriptionCount(appId);
+            return Results.Ok(new { SubscriptionCount = subscriptionCount });
         }
     }
 }
