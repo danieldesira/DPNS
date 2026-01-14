@@ -19,7 +19,7 @@ Accept: application/json
 Content-Type: application/json
 
 {
-  "verificationCode": "ZMIzzcMBF0SZkeRgR/K2Fw=="
+  "verificationCode": "yqZKSCLU1UaabGtfHGv91A=="
 }
 
 ### 
@@ -75,5 +75,11 @@ Authorization: Bearer {{authToken}}
   "title": "test turtle",
   "text": "turtles are super cute!!"
 }
+
+###
+
+GET {{DPNS_HostAddress}}/api/app/
+Content-Type: application/json
+Authorization: Bearer {{authToken}}
 
 ###

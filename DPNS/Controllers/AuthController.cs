@@ -10,11 +10,11 @@ namespace DPNS.Controllers
     {
 
         [HttpPost("register")]
-        public IResult RegisterUser([FromBody] User payload)
+        public async Task<IResult> RegisterUser([FromBody] User payload)
         {
             try
             {
-                authenticationManager.RegisterUser(payload);
+                await authenticationManager.RegisterUser(payload);
             }
             catch (InvalidOperationException e)
             {
@@ -25,11 +25,11 @@ namespace DPNS.Controllers
         }
 
         [HttpPost("verify-email")]
-        public IResult VerifyEmail([FromBody] EmailVerificationRequest payload)
+        public async Task<IResult> VerifyEmail([FromBody] EmailVerificationRequest payload)
         {
             try
             {
-                authenticationManager.VerifyEmail(payload.VerificationCode);
+                await authenticationManager.VerifyEmail(payload.VerificationCode);
             }
             catch (InvalidOperationException e)
             {
@@ -40,11 +40,11 @@ namespace DPNS.Controllers
         }
 
         [HttpPost("login")]
-        public IResult Login([FromBody] LoginRequest payload)
+        public async Task<IResult> Login([FromBody] LoginRequest payload)
         {
             try
             {
-                string token = authenticationManager.Login(payload.Email, payload.Password);
+                string token = await authenticationManager.Login(payload.Email, payload.Password);
                 return Results.Ok(new { token });
             }
             catch (InvalidOperationException)

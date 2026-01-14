@@ -7,8 +7,8 @@ namespace DPNS.Managers
     public interface INotificationManager
     {
         void AddSubscription(string endpoint, string p256dh, string auth, Guid appGuid);
-        void AddNotification(string title, string text, Guid appGuid);
-        IList<WebPush.PushSubscription> GetPushSubscriptionList(Guid appGuid);
+        Task AddNotificationAsync(string title, string text, Guid appGuid);
+        IList<PushSubscription> GetPushSubscriptionList(Guid appGuid);
         void SendNotification(string title, string text, IList<PushSubscription> pushSubscriptions);
     }
 
@@ -37,16 +37,16 @@ namespace DPNS.Managers
             subscriptionRepository.AddSubscription(endpoint, p256dh, auth, app.Id);
         }
 
-        public void AddNotification(string title, string text, Guid appGuid)
+        public async Task AddNotificationAsync(string title, string text, Guid appGuid)
         {
-            var app = appRepository.GetApp(appGuid);
+            var app = await appRepository.GetApp(appGuid);
 
             if (app == null)
             {
                 throw new InvalidOperationException("App not found");
             }
 
-            notificationRepository.AddNotification(title, text, app.Url);
+            await notificationRepository.AddNotification(title, text, app.Url);
         }
 
         public IList<PushSubscription> GetPushSubscriptionList(Guid appGuid)
@@ -59,7 +59,7 @@ namespace DPNS.Managers
             }
 
             return [.. subscriptionRepository.GetSubscriptions(app.Id)
-                .Select(s => new WebPush.PushSubscription(s.Endpoint, s.P256dh, s.Auth))];
+                .Select(s => new PushSubscription(s.Endpoint, s.P256dh, s.Auth))];
         }
 
         public void SendNotification(string title, string text, IList<PushSubscription> pushSubscriptions)

@@ -1,20 +1,21 @@
 ﻿using DPNS.Entities;
+using Microsoft.EntityFrameworkCore;
 
 namespace DPNS.Repositories
 {
     public interface IUserRepository
     {
-        int AddUser(string name, string email, string password);
-        User? GetUser(string email);
-        void CreateVerificationToken(int userId);
-        UserVerificationToken? GetUserVerificationToken(string token);
-        void VerifyEmail(int userId);
-        void DeleteVerificationToken(int userId);
+        Task<int> AddUser(string name, string email, string password);
+        Task<User?> GetUser(string email);
+        Task CreateVerificationToken(int userId);
+        Task<UserVerificationToken?> GetUserVerificationToken(string token);
+        Task VerifyEmail(int userId);
+        Task DeleteVerificationToken(int userId);
     }
 
     public class UserRepository(DpnsDbContext dbContext) : IUserRepository
     {
-        public int AddUser(string name, string email, string password)
+        public async Task<int> AddUser(string name, string email, string password)
         {
             var userEntry = dbContext.Users.Add(new User
             {
@@ -23,16 +24,16 @@ namespace DPNS.Repositories
                 Password = password,
                 CreatedAt = DateTime.UtcNow,
             });
-            dbContext.SaveChanges();
+            await dbContext.SaveChangesAsync();
             return userEntry.Entity.Id;
         }
 
-        public User? GetUser(string email)
+        public async Task<User?> GetUser(string email)
         {
-            return dbContext.Users.FirstOrDefault(u => u.Email == email);
+            return await dbContext.Users.FirstOrDefaultAsync(u => u.Email == email);
         }
 
-        public void CreateVerificationToken(int userId)
+        public async Task CreateVerificationToken(int userId)
         {
             var token = Convert.ToBase64String(Guid.NewGuid().ToByteArray());
             dbContext.UserVerificationTokens.Add(new UserVerificationToken
@@ -42,33 +43,33 @@ namespace DPNS.Repositories
                 CreatedAt = DateTime.UtcNow,
                 ExpiresAt = DateTime.UtcNow.AddHours(24)
             });
-            dbContext.SaveChanges();
+            await dbContext.SaveChangesAsync();
         }
 
-        public UserVerificationToken? GetUserVerificationToken(string token)
+        public async Task<UserVerificationToken?> GetUserVerificationToken(string token)
         {
-            return dbContext.UserVerificationTokens
-                .FirstOrDefault(t => t.VerificationCode == token);
+            return await dbContext.UserVerificationTokens
+                .FirstOrDefaultAsync(t => t.VerificationCode == token);
         }
 
-        public void VerifyEmail(int userId)
+        public async Task VerifyEmail(int userId)
         {
-            var user = dbContext.Users.Find(userId);
+            var user = await dbContext.Users.FindAsync(userId);
             if (user != null)
             {
                 user.VerifiedAt = DateTime.UtcNow;
-                dbContext.SaveChanges();
+                await dbContext.SaveChangesAsync();
             }
         }
 
-        public void DeleteVerificationToken(int userId)
+        public async Task DeleteVerificationToken(int userId)
         {
-            var token = dbContext.UserVerificationTokens
-                .FirstOrDefault(t => t.UserId == userId);
+            var token = await dbContext.UserVerificationTokens
+                .FirstOrDefaultAsync(t => t.UserId == userId);
             if (token != null)
             {
                 dbContext.UserVerificationTokens.Remove(token);
-                dbContext.SaveChanges();
+                await dbContext.SaveChangesAsync();
             }
         }
     }

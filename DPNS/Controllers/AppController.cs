@@ -10,11 +10,11 @@ namespace DPNS.Controllers
     public class AppController(IAppManager appManager) : ControllerBase
     {
         [HttpPost, Authorize]
-        public IResult CreateApp([FromBody] App payload)
+        public async Task<IResult> CreateAppAsync([FromBody] App payload)
         {
             try
             {
-                appManager.AddApp(payload.AppName, payload.Url);
+                await appManager.AddApp(payload.AppName, payload.Url);
             }
             catch (InvalidOperationException e)
             {
@@ -22,6 +22,18 @@ namespace DPNS.Controllers
             }
 
             return Results.Ok(new { Message = "Project added successfully!" });
+        }
+
+        [HttpGet, Authorize]
+        public IResult GetUserApps()
+        {
+            var userIdClaim = User.Claims.FirstOrDefault(c => c.Type == "userId");
+            if (userIdClaim == null || !int.TryParse(userIdClaim.Value, out int userId))
+            {
+                return Results.Unauthorized();
+            }
+            var apps = appManager.GetUserApps(userId);
+            return Results.Ok(apps);
         }
     }
 }

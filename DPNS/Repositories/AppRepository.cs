@@ -1,17 +1,20 @@
 ﻿using DPNS.Entities;
+using Microsoft.EntityFrameworkCore;
+using System.Threading.Tasks;
 
 namespace DPNS.Repositories
 {
     public interface IAppRepository
     {
-        void AddApp(string name, string url);
-        App? GetApp(Guid guid);
-        App? GetApp(string name, string url);
+        Task AddApp(string name, string url);
+        Task<App?> GetApp(Guid guid);
+        Task<App?> GetApp(string name, string url);
+        IList<App> GetUserApps(int userId);
     }
 
     public class AppRepository(DpnsDbContext dbContext) : IAppRepository
     {
-        public void AddApp(string name, string url)
+        public async Task AddApp(string name, string url)
         {
             dbContext.Apps.Add(new App
             {
@@ -20,17 +23,24 @@ namespace DPNS.Repositories
                 Guid = Guid.NewGuid(),
                 CreatedAt = DateTime.UtcNow,
             });
-            dbContext.SaveChanges();
+            await dbContext.SaveChangesAsync();
         }
 
-        public App? GetApp(Guid guid)
+        public async Task<App?> GetApp(Guid guid)
         {
-            return dbContext.Apps.FirstOrDefault(p => p.Guid == guid);
+            return await dbContext.Apps.FirstOrDefaultAsync(p => p.Guid == guid);
         }
 
-        public App? GetApp(string name, string url)
+        public async Task<App?> GetApp(string name, string url)
         {
-            return dbContext.Apps.FirstOrDefault(p => p.AppName == name || p.Url == url);
+            return await dbContext.Apps.FirstOrDefaultAsync(p => p.AppName == name || p.Url == url);
+        }
+
+        public IList<App> GetUserApps(int userId)
+        {
+            return [.. dbContext.AppUsers
+                .Where(au => au.UserId == userId)
+                .Select(au => au.App)];
         }
     }
 }

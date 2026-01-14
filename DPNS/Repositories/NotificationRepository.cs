@@ -4,12 +4,12 @@ namespace DPNS.Repositories
 {
     public interface INotificationRepository
     {
-        public void AddNotification(string title, string text, string appUrl);
+        Task AddNotification(string title, string text, string appUrl);
     }
 
     public class NotificationRepository(DpnsDbContext dbContext) : INotificationRepository
     {
-        public void AddNotification(string title, string text, string appUrl)
+        public async Task AddNotification(string title, string text, string appUrl)
         {
             dbContext.PushNotifications.Add(new PushNotification
             {
@@ -18,7 +18,7 @@ namespace DPNS.Repositories
                 AppUrl = appUrl,
                 CreatedAt = DateTime.UtcNow,
             });
-            dbContext.SaveChanges();
+            await dbContext.SaveChangesAsync();
         }
     }
 }

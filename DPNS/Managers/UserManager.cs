@@ -11,16 +11,16 @@ namespace DPNS.Managers
 {
     public interface IUserManager
     {
-        void RegisterUser(User user);
-        void VerifyEmail(string token);
-        string Login(string email, string password);
+        Task RegisterUser(User user);
+        Task VerifyEmail(string token);
+        Task<string> Login(string email, string password);
     }
 
     public class UserManager(IUserRepository userRepository, IConfiguration configuration) : IUserManager
     {
-        public void RegisterUser(User user)
+        public async Task RegisterUser(User user)
         {
-            if (userRepository.GetUser(user.Email) != null)
+            if (await userRepository.GetUser(user.Email) != null)
             {
                 throw new InvalidOperationException("User with this email already exists");
             }
@@ -28,9 +28,9 @@ namespace DPNS.Managers
             var passwordHasher = new PasswordHasher<User>();
             string hash = passwordHasher.HashPassword(user, user.Password);
 
-            int userId = userRepository.AddUser(user.Name, user.Email, hash);
+            int userId = await userRepository.AddUser(user.Name, user.Email, hash);
 
-            userRepository.CreateVerificationToken(userId);
+            await userRepository.CreateVerificationToken(userId);
 
             SmtpClient smtpClient = new();
             smtpClient.Send(new MailMessage(
@@ -42,21 +42,21 @@ namespace DPNS.Managers
             ));
         }
 
-        public void VerifyEmail(string token)
+        public async Task VerifyEmail(string token)
         {
-            var verificationToken = userRepository.GetUserVerificationToken(token);
+            var verificationToken = await userRepository.GetUserVerificationToken(token);
             if (verificationToken == null || verificationToken.ExpiresAt < DateTime.UtcNow)
             {
                 throw new InvalidOperationException("Invalid or expired verification token");
             }
 
-            userRepository.VerifyEmail(verificationToken.UserId);
-            userRepository.DeleteVerificationToken(verificationToken.UserId);
+            await userRepository.VerifyEmail(verificationToken.UserId);
+            await userRepository.DeleteVerificationToken(verificationToken.UserId);
         }
 
-        public string Login(string email, string password)
+        public async Task<string> Login(string email, string password)
         {
-            var user = userRepository.GetUser(email);
+            var user = await userRepository.GetUser(email);
             if (user == null || user.VerifiedAt == null)
             {
                 throw new InvalidOperationException("Invalid email or email not verified");

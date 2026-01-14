@@ -12,7 +12,7 @@ namespace DPNS.Controllers
         [HttpPost, Authorize]
         public IResult SendNotification([FromBody] Notification payload, [FromQuery(Name = "appId")] Guid appId)
         {
-            notificationManager.AddNotification(payload.Title, payload.Text, appId);
+            notificationManager.AddNotificationAsync(payload.Title, payload.Text, appId);
 
             var subscriptionList = notificationManager.GetPushSubscriptionList(appId);
             notificationManager.SendNotification(payload.Title, payload.Text, subscriptionList);
