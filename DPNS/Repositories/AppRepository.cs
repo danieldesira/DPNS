@@ -9,7 +9,7 @@ namespace DPNS.Repositories
         Task AddApp(string name, string url);
         Task<App?> GetApp(Guid guid);
         Task<App?> GetApp(string name, string url);
-        IList<App> GetUserApps(int userId);
+        Task<IList<App>> GetUserApps(int userId);
     }
 
     public class AppRepository(DpnsDbContext dbContext) : IAppRepository
@@ -36,11 +36,13 @@ namespace DPNS.Repositories
             return await dbContext.Apps.FirstOrDefaultAsync(p => p.AppName == name || p.Url == url);
         }
 
-        public IList<App> GetUserApps(int userId)
+        public async Task<IList<App>> GetUserApps(int userId)
         {
-            return [.. dbContext.AppUsers
-                .Where(au => au.UserId == userId)
-                .Select(au => au.App)];
+            return await dbContext
+                            .AppUsers
+                            .Where(au => au.UserId == userId)
+                            .Select(au => au.App)
+                            .ToListAsync();
         }
     }
 }

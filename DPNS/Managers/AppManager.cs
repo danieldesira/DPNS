@@ -7,7 +7,7 @@ namespace DPNS.Managers
     {
         Task AddApp(string appName, string url);
         Task<App> GetApp(Guid guid);
-        IList<App> GetUserApps(int userId);
+        Task<IList<App>> GetUserApps(int userId);
     }
 
     public class AppManager(IAppRepository appRepository) : IAppManager
@@ -28,9 +28,9 @@ namespace DPNS.Managers
             return app ?? throw new InvalidOperationException("App not found");
         }
 
-        public IList<App> GetUserApps(int userId)
+        public async Task<IList<App>> GetUserApps(int userId)
         {
-            return appRepository.GetUserApps(userId);
+            return await appRepository.GetUserApps(userId);
         }
     }
 }

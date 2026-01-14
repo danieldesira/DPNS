@@ -6,9 +6,9 @@ namespace DPNS.Managers
 {
     public interface INotificationManager
     {
-        void AddSubscription(string endpoint, string p256dh, string auth, Guid appGuid);
-        Task AddNotificationAsync(string title, string text, Guid appGuid);
-        IList<PushSubscription> GetPushSubscriptionList(Guid appGuid);
+        Task AddSubscription(string endpoint, string p256dh, string auth, Guid appGuid);
+        Task AddNotification(string title, string text, Guid appGuid);
+        Task<IList<PushSubscription>> GetPushSubscriptionList(Guid appGuid);
         void SendNotification(string title, string text, IList<PushSubscription> pushSubscriptions);
     }
 
@@ -20,24 +20,24 @@ namespace DPNS.Managers
         IWebPushClient webPushClient
     ) : INotificationManager
     {
-        public void AddSubscription(string endpoint, string p256dh, string auth, Guid appGuid)
+        public async Task AddSubscription(string endpoint, string p256dh, string auth, Guid appGuid)
         {
-            if (subscriptionRepository.GetSubscription(endpoint, p256dh, auth) != null)
+            if (await subscriptionRepository.GetSubscription(endpoint, p256dh, auth) != null)
             {
                 throw new InvalidOperationException("Subscription already exists");
             }
 
-            var app = appRepository.GetApp(appGuid);
+            var app = await appRepository.GetApp(appGuid);
 
             if (app == null)
             {
                 throw new InvalidOperationException("App not found");
             }
 
-            subscriptionRepository.AddSubscription(endpoint, p256dh, auth, app.Id);
+            await subscriptionRepository.AddSubscription(endpoint, p256dh, auth, app.Id);
         }
 
-        public async Task AddNotificationAsync(string title, string text, Guid appGuid)
+        public async Task AddNotification(string title, string text, Guid appGuid)
         {
             var app = await appRepository.GetApp(appGuid);
 
@@ -49,16 +49,16 @@ namespace DPNS.Managers
             await notificationRepository.AddNotification(title, text, app.Url);
         }
 
-        public IList<PushSubscription> GetPushSubscriptionList(Guid appGuid)
+        public async Task<IList<PushSubscription>> GetPushSubscriptionList(Guid appGuid)
         {
-            var app = appRepository.GetApp(appGuid);
+            var app = await appRepository.GetApp(appGuid);
 
             if (app == null)
             {
                 throw new InvalidOperationException("App not found");
             }
 
-            return [.. subscriptionRepository.GetSubscriptions(app.Id)
+            return [.. (await subscriptionRepository.GetSubscriptions(app.Id))
                 .Select(s => new PushSubscription(s.Endpoint, s.P256dh, s.Auth))];
         }
 

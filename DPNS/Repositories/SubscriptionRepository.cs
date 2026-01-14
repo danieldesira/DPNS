@@ -1,18 +1,19 @@
 ﻿using DPNS.Entities;
+using Microsoft.EntityFrameworkCore;
 
 namespace DPNS.Repositories
 {
     public interface ISubscriptionRepository
     {
-        void AddSubscription(string endpoint, string p256dh, string auth, int appId);
-        IList<PushSubscription> GetSubscriptions(int appId);
-        PushSubscription? GetSubscription(string endpoint, string p256dh, string auth);
+        Task AddSubscription(string endpoint, string p256dh, string auth, int appId);
+        Task<IList<PushSubscription>> GetSubscriptions(int appId);
+        Task<PushSubscription?> GetSubscription(string endpoint, string p256dh, string auth);
     }
 
 
     public class SubscriptionRepository(DpnsDbContext dbContext) : ISubscriptionRepository
     {
-        public void AddSubscription(string endpoint, string p256dh, string auth, int appId)
+        public async Task AddSubscription(string endpoint, string p256dh, string auth, int appId)
         {
             dbContext.PushSubscriptions.Add(new PushSubscription
             {
@@ -22,18 +23,18 @@ namespace DPNS.Repositories
                 AppId = appId,
                 CreatedAt = DateTime.UtcNow,
             });
-            dbContext.SaveChanges();
+            await dbContext.SaveChangesAsync();
         }
 
-        public IList<PushSubscription> GetSubscriptions(int appId)
+        public async Task<IList<PushSubscription>> GetSubscriptions(int appId)
         {
-            return [.. dbContext.PushSubscriptions.Where(s => s.AppId == appId)];
+            return await dbContext.PushSubscriptions.Where(s => s.AppId == appId).ToListAsync();
         }
 
-        public PushSubscription? GetSubscription(string endpoint, string p256dh, string auth)
+        public async Task<PushSubscription?> GetSubscription(string endpoint, string p256dh, string auth)
         {
-            return dbContext.PushSubscriptions
-                    .FirstOrDefault(s => s.Endpoint == endpoint && s.P256dh == p256dh && s.Auth == auth);
+            return await dbContext.PushSubscriptions
+                    .FirstOrDefaultAsync(s => s.Endpoint == endpoint && s.P256dh == p256dh && s.Auth == auth);
         }
     }
 }

@@ -10,7 +10,7 @@ namespace DPNS.Controllers
     public class AppController(IAppManager appManager) : ControllerBase
     {
         [HttpPost, Authorize]
-        public async Task<IResult> CreateAppAsync([FromBody] App payload)
+        public async Task<IResult> CreateApp([FromBody] App payload)
         {
             try
             {
@@ -25,14 +25,14 @@ namespace DPNS.Controllers
         }
 
         [HttpGet, Authorize]
-        public IResult GetUserApps()
+        public async Task<IResult> GetUserAppsAsync()
         {
             var userIdClaim = User.Claims.FirstOrDefault(c => c.Type == "userId");
             if (userIdClaim == null || !int.TryParse(userIdClaim.Value, out int userId))
             {
                 return Results.Unauthorized();
             }
-            var apps = appManager.GetUserApps(userId);
+            var apps = await appManager.GetUserApps(userId);
             return Results.Ok(apps);
         }
     }

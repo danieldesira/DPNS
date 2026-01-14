@@ -10,11 +10,11 @@ namespace DPNS.Controllers
     public class NotificationController(INotificationManager notificationManager) : ControllerBase
     {
         [HttpPost, Authorize]
-        public IResult SendNotification([FromBody] Notification payload, [FromQuery(Name = "appId")] Guid appId)
+        public async Task<IResult> SendNotification([FromBody] Notification payload, [FromQuery(Name = "appId")] Guid appId)
         {
-            notificationManager.AddNotificationAsync(payload.Title, payload.Text, appId);
+            await notificationManager.AddNotification(payload.Title, payload.Text, appId);
 
-            var subscriptionList = notificationManager.GetPushSubscriptionList(appId);
+            var subscriptionList = await notificationManager.GetPushSubscriptionList(appId);
             notificationManager.SendNotification(payload.Title, payload.Text, subscriptionList);
 
             return Results.Ok(new { Message = "Notification sent successfully" });

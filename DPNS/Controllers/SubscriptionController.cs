@@ -9,11 +9,11 @@ namespace DPNS.Controllers
     public class SubscriptionController(INotificationManager notificationManager) : ControllerBase
     {
         [HttpPost]
-        public IResult CreateSubscription([FromBody] Subscription payload, [FromQuery(Name = "appId")] Guid appId)
+        public async Task<IResult> CreateSubscriptionAsync([FromBody] Subscription payload, [FromQuery(Name = "appId")] Guid appId)
         {
             try
             {
-                notificationManager.AddSubscription(
+                await notificationManager.AddSubscription(
                     payload.Endpoint,
                     payload.Keys.P256dh,
                     payload.Keys.Auth,
