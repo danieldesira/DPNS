@@ -62,7 +62,7 @@ namespace DPNS.Managers
                 throw new InvalidOperationException("Invalid email or email not verified");
             }
             var passwordHasher = new PasswordHasher<Entities.User>();
-            var result = passwordHasher.VerifyHashedPassword(user, user.Password, password);
+            var result = passwordHasher.VerifyHashedPassword(user, user.HashedPassword, password);
             if (result == PasswordVerificationResult.Failed)
             {
                 throw new InvalidOperationException("Invalid password");

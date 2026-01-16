@@ -21,7 +21,7 @@ namespace DPNS.Repositories
             {
                 Name = name,
                 Email = email,
-                Password = password,
+                HashedPassword = password,
                 CreatedAt = DateTime.UtcNow,
             });
             await dbContext.SaveChangesAsync();

@@ -1,6 +1,8 @@
-﻿namespace DPNS.Entities;
+﻿using Microsoft.AspNetCore.Identity;
 
-public partial class User
+namespace DPNS.Entities;
+
+public partial class User : IdentityUser<int>
 {
     public int Id { get; set; }
 
@@ -8,7 +10,7 @@ public partial class User
 
     public string Email { get; set; } = null!;
 
-    public string? Password { get; set; }
+    public string? HashedPassword { get; set; }
 
     public DateTimeOffset CreatedAt { get; set; }
 
@@ -16,7 +18,7 @@ public partial class User
 
     public DateTime? VerifiedAt { get; set; }
 
-    public virtual ICollection<AppUser> AppUsers { get; set; } = new List<AppUser>();
+    public virtual ICollection<AppUser> AppUsers { get; set; } = [];
 
-    public virtual ICollection<UserVerificationToken> UserVerificationTokens { get; set; } = new List<UserVerificationToken>();
+    public virtual ICollection<UserVerificationToken> UserVerificationTokens { get; set; } = [];
 }

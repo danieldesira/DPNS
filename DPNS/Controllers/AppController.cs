@@ -2,6 +2,7 @@
 using DPNS.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Identity;
 
 namespace DPNS.Controllers
 {

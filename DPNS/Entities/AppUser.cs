@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace DPNS.Entities;
+﻿namespace DPNS.Entities;
 
 public partial class AppUser
 {

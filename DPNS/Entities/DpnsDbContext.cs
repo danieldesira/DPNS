@@ -146,7 +146,7 @@ public partial class DpnsDbContext : DbContext
             entity.Property(e => e.Name)
                 .HasColumnType("character varying")
                 .HasColumnName("name");
-            entity.Property(e => e.Password)
+            entity.Property(e => e.HashedPassword)
                 .HasColumnType("character varying")
                 .HasColumnName("password");
             entity.Property(e => e.VerifiedAt).HasColumnName("verified_at");
