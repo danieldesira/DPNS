@@ -150,6 +150,9 @@ public partial class DpnsDbContext : DbContext
                 .HasColumnType("character varying")
                 .HasColumnName("password");
             entity.Property(e => e.VerifiedAt).HasColumnName("verified_at");
+
+            entity.Property(u => u.AccessFailedCount)
+                .HasColumnName("access_failed_count");
         });
 
         modelBuilder.Entity<UserVerificationToken>(entity =>

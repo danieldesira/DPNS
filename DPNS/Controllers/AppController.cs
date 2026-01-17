@@ -3,6 +3,7 @@ using DPNS.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Identity;
+using DPNS.Extensions;
 
 namespace DPNS.Controllers
 {
@@ -28,12 +29,8 @@ namespace DPNS.Controllers
         [HttpGet, Authorize]
         public async Task<IResult> GetUserApps()
         {
-            var userIdClaim = User.Claims.FirstOrDefault(c => c.Type == "userId");
-            if (userIdClaim == null || !int.TryParse(userIdClaim.Value, out int userId))
-            {
-                return Results.Unauthorized();
-            }
-            var apps = await appManager.GetUserApps(userId);
+            var userId = User.GetUserId();
+            var apps = await appManager.GetUserApps(userId ?? 0);
             return Results.Ok(apps);
         }
 
