@@ -9,9 +9,14 @@ namespace DPNS.Managers
         Task<App> GetApp(Guid guid);
         Task<IList<App>> GetUserApps(int userId);
         Task<int> GetSubscriptionCount(int userId);
+        Task AddAppUser(Guid guid, string email, int currentUserId);
     }
 
-    public class AppManager(IAppRepository appRepository, ISubscriptionRepository subscriptionRepository) : IAppManager
+    public class AppManager(
+        IAppRepository appRepository,
+        ISubscriptionRepository subscriptionRepository,
+        IUserRepository userRepository
+    ) : IAppManager
     {
         public async Task AddApp(string appName, string url, int userId)
         {
@@ -38,6 +43,29 @@ namespace DPNS.Managers
         {
             var apps = await subscriptionRepository.GetSubscriptions(appId);
             return apps.Count;
+        }
+
+        public async Task AddAppUser(Guid guid, string email, int currentUserId)
+        {
+            var app = await appRepository.GetApp(guid) ?? throw new InvalidOperationException("App not found");
+            var user = await userRepository.GetUser(email) ?? throw new InvalidOperationException("User not found");
+            if (user.VerifiedAt == null)
+            {
+                throw new InvalidOperationException("User is not verified");
+            }
+            if (user.Id == currentUserId)
+            {
+                throw new InvalidOperationException("Cannot add yourself to the app");
+            }
+            if (!await appRepository.IsUserAppAdmin(app.Id, currentUserId)) 
+            {
+                throw new InvalidOperationException("User is not an admin of the app");
+            }
+            if (await appRepository.ExistAppUserLink(app.Id, user.Id))
+            {
+                throw new InvalidOperationException("User is already added to the app");
+            }
+            await appRepository.AddAppUser(app.Id, user.Id);
         }
     }
 }

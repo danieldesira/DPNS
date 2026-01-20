@@ -34,6 +34,22 @@ namespace DPNS.Controllers
             return Results.Ok(apps);
         }
 
+        [HttpPost("add-user")]
+        [Authorize]
+        public async Task<IResult> AddAppUser([FromBody] AddAppUserRequest payload)
+        {
+            try
+            {
+                await appManager.AddAppUser(payload.AppGuid, payload.Email, User.GetUserId() ?? 0);
+            }
+            catch (InvalidOperationException e)
+            {
+                return Results.Conflict(e.Message);
+            }
+            return Results.Ok(new { Message = "User added to app successfully!" });
+        }
+
+
         [HttpGet("subscription-count/{appId}")]
         [Authorize]
         public async Task<IResult> GetSubscriptionCount([FromRoute] int appId)

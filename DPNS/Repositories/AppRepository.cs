@@ -11,34 +11,48 @@ namespace DPNS.Repositories
         Task<App?> GetApp(Guid guid);
         Task<App?> GetApp(string name, string url);
         Task<IList<App>> GetUserApps(int userId);
+        Task AddAppUser(int appId, int userId);
+        Task<bool> IsUserAppAdmin(int appId, int userId);
+        Task<bool> ExistAppUserLink(int appId, int userId);
     }
 
     public class AppRepository(DpnsDbContext dbContext) : IAppRepository
     {
         public async Task AddApp(string name, string url, int userId)
         {
-            using (var transaction = await dbContext.Database.BeginTransactionAsync())
+            using var transaction = await dbContext.Database.BeginTransactionAsync();
+
+            var app = dbContext.Apps.Add(new App
             {
-                var app = dbContext.Apps.Add(new App
-                {
-                    AppName = name,
-                    Url = url,
-                    Guid = Guid.NewGuid(),
-                    CreatedAt = DateTime.UtcNow,
-                });
-                await dbContext.SaveChangesAsync();
+                AppName = name,
+                Url = url,
+                Guid = Guid.NewGuid(),
+                CreatedAt = DateTime.UtcNow,
+            });
+            await dbContext.SaveChangesAsync();
 
-                dbContext.AppUsers.Add(new AppUser
-                {
-                    AppId = app.Entity.Id,
-                    UserId = userId,
-                    IsAdmin = true,
-                    CreatedAt = DateTime.UtcNow,
-                });
-                await dbContext.SaveChangesAsync();
+            dbContext.AppUsers.Add(new AppUser
+            {
+                AppId = app.Entity.Id,
+                UserId = userId,
+                IsAdmin = true,
+                CreatedAt = DateTime.UtcNow,
+            });
+            await dbContext.SaveChangesAsync();
 
-                await transaction.CommitAsync();
-            }
+            await transaction.CommitAsync();
+        }
+
+        public async Task AddAppUser(int appId, int userId)
+        {
+            dbContext.AppUsers.Add(new AppUser
+            {
+                AppId = appId,
+                UserId = userId,
+                IsAdmin = false,
+                CreatedAt = DateTime.UtcNow,
+            });
+            await dbContext.SaveChangesAsync();
         }
 
         public async Task<App?> GetApp(Guid guid)
@@ -58,6 +72,16 @@ namespace DPNS.Repositories
                             .Where(au => au.UserId == userId)
                             .Select(au => au.App)
                             .ToListAsync();
+        }
+
+        public async Task<bool> IsUserAppAdmin(int appId, int userId)
+        {
+            return await dbContext.AppUsers.AnyAsync(au => au.AppId == appId && au.UserId == userId && au.IsAdmin);
+        }
+
+        public async Task<bool> ExistAppUserLink(int appId, int userId)
+        {
+            return await dbContext.AppUsers.AnyAsync(au => au.AppId == appId && au.UserId == userId);
         }
     }
 }

@@ -5,9 +5,8 @@ namespace DPNS.Repositories
 {
     public interface IUserRepository
     {
-        Task<int> AddUser(string name, string email, string password);
+        Task AddUser(string name, string email, string password);
         Task<User?> GetUser(string email);
-        Task CreateVerificationToken(int userId);
         Task<UserVerificationToken?> GetUserVerificationToken(string token);
         Task VerifyEmail(int userId);
         Task DeleteVerificationToken(int userId);
@@ -15,8 +14,10 @@ namespace DPNS.Repositories
 
     public class UserRepository(DpnsDbContext dbContext) : IUserRepository
     {
-        public async Task<int> AddUser(string name, string email, string password)
+        public async Task AddUser(string name, string email, string password)
         {
+            using var transaction = await dbContext.Database.BeginTransactionAsync();
+
             var userEntry = dbContext.Users.Add(new User
             {
                 FullName = name,
@@ -25,7 +26,10 @@ namespace DPNS.Repositories
                 CreatedAt = DateTime.UtcNow,
             });
             await dbContext.SaveChangesAsync();
-            return userEntry.Entity.Id;
+            
+            await CreateVerificationToken(userEntry.Entity.Id);
+
+            await transaction.CommitAsync();
         }
 
         public async Task<User?> GetUser(string email)
@@ -33,7 +37,7 @@ namespace DPNS.Repositories
             return await dbContext.Users.FirstOrDefaultAsync(u => u.Email == email);
         }
 
-        public async Task CreateVerificationToken(int userId)
+        private async Task CreateVerificationToken(int userId)
         {
             var token = Convert.ToBase64String(Guid.NewGuid().ToByteArray());
             dbContext.UserVerificationTokens.Add(new UserVerificationToken

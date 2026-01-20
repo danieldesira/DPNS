@@ -29,9 +29,7 @@ namespace DPNS.Managers
             var passwordHasher = new PasswordHasher<Models.User>();
             string hash = passwordHasher.HashPassword(user, user.Password);
 
-            int userId = await userRepository.AddUser(user.Name, user.Email, hash);
-
-            await userRepository.CreateVerificationToken(userId);
+            await userRepository.AddUser(user.Name, user.Email, hash);
 
             SmtpClient smtpClient = new();
             smtpClient.Send(new MailMessage(

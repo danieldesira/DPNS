@@ -7,8 +7,8 @@ Accept: application/json
 Content-Type: application/json
 
 {
-  "name": "Daniel Desira",
-  "email": "desiradaniel2007@gmail.com",
+  "name": "tester",
+  "email": "tester@gmail.com",
   "password": "123456"
 }
 
@@ -19,7 +19,7 @@ Accept: application/json
 Content-Type: application/json
 
 {
-  "verificationCode": "S3WWmUsj/0icV/MIgS7LKg=="
+  "verificationCode": "uA9OTJ5Xk06Gnp4Zzw2kPg=="
 }
 
 ### 
@@ -81,6 +81,18 @@ Authorization: Bearer {{authToken}}
 GET {{DPNS_HostAddress}}/api/app/
 Content-Type: application/json
 Authorization: Bearer {{authToken}}
+
+###
+
+POST {{DPNS_HostAddress}}/api/app/add-user/
+Accept: application/json
+Content-Type: application/json
+Authorization: Bearer {{authToken}}
+
+{
+  "appGuid": "986bb193-67f9-46fe-aae0-1f6edc7f8a83",
+  "email": "tester@gmail.com"
+}
 
 ###
 
