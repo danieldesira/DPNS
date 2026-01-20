@@ -17,7 +17,8 @@ namespace DPNS.Managers
         ISubscriptionRepository subscriptionRepository,
         INotificationRepository notificationRepository,
         IConfiguration configuration,
-        IWebPushClient webPushClient
+        IWebPushClient webPushClient,
+        IUserRepository userRepository
     ) : INotificationManager
     {
         public async Task AddSubscription(string endpoint, string p256dh, string auth, Guid appGuid)
@@ -46,7 +47,9 @@ namespace DPNS.Managers
                 throw new InvalidOperationException("User does not have access permission for this app");
             }
 
-            await notificationRepository.AddNotification(title, text, app.Url);
+            var user = await userRepository.GetUser(currentUserId) ?? throw new InvalidOperationException("User not found");
+
+            await notificationRepository.AddNotification(title, text, app.Url, user.Email);
         }
 
         public async Task<IList<PushSubscription>> GetPushSubscriptionList(Guid appGuid)

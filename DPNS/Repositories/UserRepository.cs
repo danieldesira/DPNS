@@ -7,6 +7,7 @@ namespace DPNS.Repositories
     {
         Task AddUser(string name, string email, string password);
         Task<User?> GetUser(string email);
+        Task<User?> GetUser(int userId);
         Task<UserVerificationToken?> GetUserVerificationToken(string token);
         Task VerifyEmail(int userId);
         Task DeleteVerificationToken(int userId);
@@ -35,6 +36,11 @@ namespace DPNS.Repositories
         public async Task<User?> GetUser(string email)
         {
             return await dbContext.Users.FirstOrDefaultAsync(u => u.Email == email);
+        }
+
+        public async Task<User?> GetUser(int userId)
+        {
+            return await dbContext.Users.FirstOrDefaultAsync(u => u.Id == userId);
         }
 
         private async Task CreateVerificationToken(int userId)

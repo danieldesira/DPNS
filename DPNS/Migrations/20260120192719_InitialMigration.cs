@@ -37,7 +37,8 @@ namespace DPNS.Migrations
                     title = table.Column<string>(type: "character varying", nullable: false),
                     text = table.Column<string>(type: "character varying", nullable: false),
                     created_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    app_url = table.Column<string>(type: "character varying", nullable: false)
+                    app_url = table.Column<string>(type: "character varying", nullable: false),
+                    user_email = table.Column<string>(type: "character varying", nullable: false)
                 },
                 constraints: table =>
                 {

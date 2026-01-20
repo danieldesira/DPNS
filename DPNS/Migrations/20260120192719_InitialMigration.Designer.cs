@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace DPNS.Migrations
 {
     [DbContext(typeof(DpnsDbContext))]
-    [Migration("20260120150405_InitialMigration")]
+    [Migration("20260120192719_InitialMigration")]
     partial class InitialMigration
     {
         /// <inheritdoc />
@@ -126,6 +126,11 @@ namespace DPNS.Migrations
                         .IsRequired()
                         .HasColumnType("character varying")
                         .HasColumnName("title");
+
+                    b.Property<string>("UserEmail")
+                        .IsRequired()
+                        .HasColumnType("character varying")
+                        .HasColumnName("user_email");
 
                     b.HasKey("Id")
                         .HasName("push_notifications_pk");

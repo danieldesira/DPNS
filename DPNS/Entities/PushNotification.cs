@@ -11,4 +11,6 @@ public partial class PushNotification
     public DateTime CreatedAt { get; set; }
 
     public string AppUrl { get; set; } = null!;
+
+    public string UserEmail { get; set; } = null!;
 }

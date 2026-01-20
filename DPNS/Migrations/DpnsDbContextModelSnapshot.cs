@@ -124,6 +124,11 @@ namespace DPNS.Migrations
                         .HasColumnType("character varying")
                         .HasColumnName("title");
 
+                    b.Property<string>("UserEmail")
+                        .IsRequired()
+                        .HasColumnType("character varying")
+                        .HasColumnName("user_email");
+
                     b.HasKey("Id")
                         .HasName("push_notifications_pk");
 

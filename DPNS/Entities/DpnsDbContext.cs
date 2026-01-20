@@ -90,6 +90,9 @@ public partial class DpnsDbContext : DbContext
             entity.Property(e => e.AppUrl)
                 .HasColumnType("character varying")
                 .HasColumnName("app_url");
+            entity.Property(e => e.UserEmail)
+                .HasColumnType("character varying")
+                .HasColumnName("user_email");
             entity.Property(e => e.CreatedAt).HasColumnName("created_at");
             entity.Property(e => e.Text)
                 .HasColumnType("character varying")
