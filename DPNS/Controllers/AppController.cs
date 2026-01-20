@@ -16,7 +16,7 @@ namespace DPNS.Controllers
         {
             try
             {
-                await appManager.AddApp(payload.AppName, payload.Url);
+                await appManager.AddApp(payload.AppName, payload.Url, User.GetUserId() ?? 0);
             }
             catch (InvalidOperationException e)
             {

@@ -65,6 +65,7 @@ public partial class DpnsDbContext : DbContext
             entity.Property(e => e.AppId).HasColumnName("app_id");
             entity.Property(e => e.CreatedAt).HasColumnName("created_at");
             entity.Property(e => e.UserId).HasColumnName("user_id");
+            entity.Property(e => e.IsAdmin).HasColumnName("is_admin");
 
             entity.HasOne(d => d.App).WithMany(p => p.AppUsers)
                 .HasForeignKey(d => d.AppId)

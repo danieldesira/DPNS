@@ -1,12 +1,13 @@
 ﻿using DPNS.Entities;
 using Microsoft.EntityFrameworkCore;
 using System.Threading.Tasks;
+using System.Transactions;
 
 namespace DPNS.Repositories
 {
     public interface IAppRepository
     {
-        Task AddApp(string name, string url);
+        Task AddApp(string name, string url, int userId);
         Task<App?> GetApp(Guid guid);
         Task<App?> GetApp(string name, string url);
         Task<IList<App>> GetUserApps(int userId);
@@ -14,16 +15,30 @@ namespace DPNS.Repositories
 
     public class AppRepository(DpnsDbContext dbContext) : IAppRepository
     {
-        public async Task AddApp(string name, string url)
+        public async Task AddApp(string name, string url, int userId)
         {
-            dbContext.Apps.Add(new App
+            using (var transaction = await dbContext.Database.BeginTransactionAsync())
             {
-                AppName = name,
-                Url = url,
-                Guid = Guid.NewGuid(),
-                CreatedAt = DateTime.UtcNow,
-            });
-            await dbContext.SaveChangesAsync();
+                var app = dbContext.Apps.Add(new App
+                {
+                    AppName = name,
+                    Url = url,
+                    Guid = Guid.NewGuid(),
+                    CreatedAt = DateTime.UtcNow,
+                });
+                await dbContext.SaveChangesAsync();
+
+                dbContext.AppUsers.Add(new AppUser
+                {
+                    AppId = app.Entity.Id,
+                    UserId = userId,
+                    IsAdmin = true,
+                    CreatedAt = DateTime.UtcNow,
+                });
+                await dbContext.SaveChangesAsync();
+
+                await transaction.CommitAsync();
+            }
         }
 
         public async Task<App?> GetApp(Guid guid)

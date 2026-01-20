@@ -8,6 +8,8 @@ public partial class AppUser
 
     public int UserId { get; set; }
 
+    public bool IsAdmin { get; set; }
+
     public DateTime CreatedAt { get; set; }
 
     public virtual App App { get; set; } = null!;

@@ -105,6 +105,7 @@ namespace DPNS.Migrations
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     app_id = table.Column<int>(type: "integer", nullable: false),
                     user_id = table.Column<int>(type: "integer", nullable: false),
+                    is_admin = table.Column<bool>(type: "boolean", nullable: false),
                     created_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
                 },
                 constraints: table =>

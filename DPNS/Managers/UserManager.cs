@@ -1,4 +1,5 @@
-﻿using DPNS.Models;
+﻿using DPNS.Entities;
+using DPNS.Models;
 using DPNS.Repositories;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
@@ -11,21 +12,21 @@ namespace DPNS.Managers
 {
     public interface IUserManager
     {
-        Task RegisterUser(User user);
+        Task RegisterUser(Models.User user);
         Task VerifyEmail(string token);
         Task<string> Login(string email, string password);
     }
 
     public class UserManager(IUserRepository userRepository, IConfiguration configuration) : IUserManager
     {
-        public async Task RegisterUser(User user)
+        public async Task RegisterUser(Models.User user)
         {
             if (await userRepository.GetUser(user.Email) != null)
             {
                 throw new InvalidOperationException("User with this email already exists");
             }
 
-            var passwordHasher = new PasswordHasher<User>();
+            var passwordHasher = new PasswordHasher<Models.User>();
             string hash = passwordHasher.HashPassword(user, user.Password);
 
             int userId = await userRepository.AddUser(user.Name, user.Email, hash);
@@ -67,18 +68,18 @@ namespace DPNS.Managers
             {
                 throw new InvalidOperationException("Invalid password");
             }
-            return GenerateJwtToken(email);
+            return GenerateJwtToken(user);
         }
 
-        private string GenerateJwtToken(string email)
+        private string GenerateJwtToken(Entities.User user)
         {
             var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["Jwt:Key"] ?? ""));
             var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
 
             var claims = new[]
             {
-                new Claim(JwtRegisteredClaimNames.Sub, email),
-                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
+                new Claim(ClaimTypes.Email, user.Email),
+                new Claim(ClaimTypes.NameIdentifier, user.Id.ToString())
             };
 
             var token = new JwtSecurityToken(
@@ -91,5 +92,7 @@ namespace DPNS.Managers
 
             return new JwtSecurityTokenHandler().WriteToken(token);
         }
+
+
     }
 }

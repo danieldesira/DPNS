@@ -5,7 +5,7 @@ namespace DPNS.Managers
 {
     public interface IAppManager
     {
-        Task AddApp(string appName, string url);
+        Task AddApp(string appName, string url, int userId);
         Task<App> GetApp(Guid guid);
         Task<IList<App>> GetUserApps(int userId);
         Task<int> GetSubscriptionCount(int userId);
@@ -13,14 +13,14 @@ namespace DPNS.Managers
 
     public class AppManager(IAppRepository appRepository, ISubscriptionRepository subscriptionRepository) : IAppManager
     {
-        public async Task AddApp(string appName, string url)
+        public async Task AddApp(string appName, string url, int userId)
         {
             if (await appRepository.GetApp(appName, url) != null)
             {
                 throw new InvalidOperationException("Project name already exists");
             }
 
-            await appRepository.AddApp(appName, url);
+            await appRepository.AddApp(appName, url, userId);
         }
 
         public async Task<App> GetApp(Guid guid)

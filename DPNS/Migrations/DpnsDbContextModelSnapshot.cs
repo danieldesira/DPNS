@@ -78,6 +78,10 @@ namespace DPNS.Migrations
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("created_at");
 
+                    b.Property<bool>("IsAdmin")
+                        .HasColumnType("boolean")
+                        .HasColumnName("is_admin");
+
                     b.Property<int>("UserId")
                         .HasColumnType("integer")
                         .HasColumnName("user_id");

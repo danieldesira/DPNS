@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace DPNS.Migrations
 {
     [DbContext(typeof(DpnsDbContext))]
-    [Migration("20260120141824_InitialMigration")]
+    [Migration("20260120150405_InitialMigration")]
     partial class InitialMigration
     {
         /// <inheritdoc />
@@ -80,6 +80,10 @@ namespace DPNS.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("created_at");
+
+                    b.Property<bool>("IsAdmin")
+                        .HasColumnType("boolean")
+                        .HasColumnName("is_admin");
 
                     b.Property<int>("UserId")
                         .HasColumnType("integer")
