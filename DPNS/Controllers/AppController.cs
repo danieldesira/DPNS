@@ -54,8 +54,15 @@ namespace DPNS.Controllers
         [Authorize]
         public async Task<IResult> GetSubscriptionCount([FromRoute] int appId)
         {
-            var subscriptionCount = await appManager.GetSubscriptionCount(appId);
-            return Results.Ok(new { SubscriptionCount = subscriptionCount });
+            try
+            { 
+                var subscriptionCount = await appManager.GetSubscriptionCount(appId, User.GetUserId() ?? 0);
+                return Results.Ok(new { SubscriptionCount = subscriptionCount });
+            }
+            catch (InvalidOperationException e)
+            {
+                return Results.Conflict(e.Message);
+            }
         }
     }
 }

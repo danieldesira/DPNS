@@ -8,7 +8,7 @@ namespace DPNS.Managers
         Task AddApp(string appName, string url, int userId);
         Task<App> GetApp(Guid guid);
         Task<IList<App>> GetUserApps(int userId);
-        Task<int> GetSubscriptionCount(int userId);
+        Task<int> GetSubscriptionCount(int appId, int userId);
         Task AddAppUser(Guid guid, string email, int currentUserId);
     }
 
@@ -39,8 +39,13 @@ namespace DPNS.Managers
             return await appRepository.GetUserApps(userId);
         }
 
-        public async Task<int> GetSubscriptionCount(int appId)
+        public async Task<int> GetSubscriptionCount(int appId, int userId)
         {
+            if (!await appRepository.ExistAppUserLink(appId, userId))
+            {
+                throw new InvalidOperationException("User does not have access to this app");
+            }
+
             var apps = await subscriptionRepository.GetSubscriptions(appId);
             return apps.Count;
         }

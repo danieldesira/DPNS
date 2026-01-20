@@ -7,8 +7,8 @@ Accept: application/json
 Content-Type: application/json
 
 {
-  "name": "tester",
-  "email": "tester@gmail.com",
+  "name": "tester2",
+  "email": "tester2@gmail.com",
   "password": "123456"
 }
 
@@ -19,7 +19,7 @@ Accept: application/json
 Content-Type: application/json
 
 {
-  "verificationCode": "uA9OTJ5Xk06Gnp4Zzw2kPg=="
+  "verificationCode": "tK99s+Zrvkamtri/LidchQ=="
 }
 
 ### 
@@ -96,7 +96,7 @@ Authorization: Bearer {{authToken}}
 
 ###
 
-GET {{DPNS_HostAddress}}/api/app/subscription-count/2
+GET {{DPNS_HostAddress}}/api/app/subscription-count/1
 Content-Type: application/json
 Authorization: Bearer {{authToken}}
 
