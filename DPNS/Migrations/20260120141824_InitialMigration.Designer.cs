@@ -12,8 +12,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace DPNS.Migrations
 {
     [DbContext(typeof(DpnsDbContext))]
-    [Migration("20260113173004_InitialCreate")]
-    partial class InitialCreate
+    [Migration("20260120141824_InitialMigration")]
+    partial class InitialMigration
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -178,6 +178,14 @@ namespace DPNS.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
+                    b.Property<int>("AccessFailedCount")
+                        .HasColumnType("integer")
+                        .HasColumnName("access_failed_count");
+
+                    b.Property<string>("ConcurrencyStamp")
+                        .HasColumnType("character varying")
+                        .HasColumnName("concurrency_stamp");
+
                     b.Property<DateTimeOffset>("CreatedAt")
                         .HasColumnType("time with time zone")
                         .HasColumnName("created_at");
@@ -187,18 +195,62 @@ namespace DPNS.Migrations
                         .HasColumnType("character varying")
                         .HasColumnName("email");
 
+                    b.Property<bool>("EmailConfirmed")
+                        .HasColumnType("boolean")
+                        .HasColumnName("email_confirmed");
+
+                    b.Property<string>("FullName")
+                        .IsRequired()
+                        .HasColumnType("character varying")
+                        .HasColumnName("full_name");
+
+                    b.Property<string>("HashedPassword")
+                        .HasColumnType("character varying")
+                        .HasColumnName("hashed_password");
+
                     b.Property<DateTimeOffset?>("LastLoginAt")
                         .HasColumnType("time with time zone")
                         .HasColumnName("last_login_at");
 
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("character varying")
-                        .HasColumnName("name");
+                    b.Property<bool>("LockoutEnabled")
+                        .HasColumnType("boolean")
+                        .HasColumnName("lockout_enabled");
 
-                    b.Property<string>("Password")
+                    b.Property<DateTimeOffset?>("LockoutEnd")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("lockout_end");
+
+                    b.Property<string>("NormalizedEmail")
                         .HasColumnType("character varying")
-                        .HasColumnName("password");
+                        .HasColumnName("normalized_email");
+
+                    b.Property<string>("NormalizedUserName")
+                        .HasColumnType("character varying")
+                        .HasColumnName("normalized_user_name");
+
+                    b.Property<string>("PasswordHash")
+                        .HasColumnType("character varying")
+                        .HasColumnName("password_hash");
+
+                    b.Property<string>("PhoneNumber")
+                        .HasColumnType("character varying")
+                        .HasColumnName("phone_number");
+
+                    b.Property<bool>("PhoneNumberConfirmed")
+                        .HasColumnType("boolean")
+                        .HasColumnName("phone_number_confirmed");
+
+                    b.Property<string>("SecurityStamp")
+                        .HasColumnType("character varying")
+                        .HasColumnName("security_stamp");
+
+                    b.Property<bool>("TwoFactorEnabled")
+                        .HasColumnType("boolean")
+                        .HasColumnName("two_factor_enabled");
+
+                    b.Property<string>("UserName")
+                        .HasColumnType("character varying")
+                        .HasColumnName("user_name");
 
                     b.Property<DateTime?>("VerifiedAt")
                         .HasColumnType("timestamp with time zone")

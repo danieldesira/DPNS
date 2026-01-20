@@ -134,25 +134,77 @@ public partial class DpnsDbContext : DbContext
             entity.HasIndex(e => e.Email, "users_unique").IsUnique();
 
             entity.Property(e => e.Id).HasColumnName("id");
-            entity.Property(e => e.CreatedAt)
+
+            
+            entity.Property(u => u.UserName)
+                  .HasColumnType("character varying")
+                  .HasColumnName("user_name");
+
+            entity.Property(u => u.NormalizedUserName)
+                  .HasColumnType("character varying")
+                  .HasColumnName("normalized_user_name");
+
+            entity.Property(u => u.Email)
+                  .HasColumnType("character varying")
+                  .HasColumnName("email");
+
+            entity.Property(u => u.NormalizedEmail)
+                  .HasColumnType("character varying")
+                  .HasColumnName("normalized_email");
+
+            entity.Property(u => u.EmailConfirmed)
+                  .HasColumnName("email_confirmed");
+
+            
+            entity.Property(u => u.HashedPassword)
+                  .HasColumnType("character varying")
+                  .HasColumnName("hashed_password");
+
+            entity.Property(u => u.PasswordHash)
+                  .HasColumnType("character varying")
+                  .HasColumnName("password_hash");
+
+            entity.Property(u => u.SecurityStamp)
+                  .HasColumnType("character varying")
+                  .HasColumnName("security_stamp");
+
+            entity.Property(u => u.ConcurrencyStamp)
+                  .HasColumnType("character varying")
+                  .HasColumnName("concurrency_stamp");
+
+            entity.Property(u => u.PhoneNumber)
+                  .HasColumnType("character varying")
+                  .HasColumnName("phone_number");
+
+            entity.Property(u => u.PhoneNumberConfirmed)
+                  .HasColumnName("phone_number_confirmed");
+
+            entity.Property(u => u.TwoFactorEnabled)
+                  .HasColumnName("two_factor_enabled");
+
+            entity.Property(u => u.LockoutEnd)
+                  .HasColumnType("timestamp with time zone")
+                  .HasColumnName("lockout_end");
+
+            entity.Property(u => u.LockoutEnabled)
+                  .HasColumnName("lockout_enabled");
+
+            entity.Property(u => u.AccessFailedCount) 
+                  .HasColumnName("access_failed_count");
+            
+            entity.Property(u => u.FullName)
+                  .HasColumnType("character varying")
+                  .HasColumnName("full_name");
+
+            entity.Property(u => u.CreatedAt)
                 .HasColumnType("time with time zone")
                 .HasColumnName("created_at");
-            entity.Property(e => e.Email)
-                .HasColumnType("character varying")
-                .HasColumnName("email");
-            entity.Property(e => e.LastLoginAt)
+
+            entity.Property(u => u.LastLoginAt)
                 .HasColumnType("time with time zone")
                 .HasColumnName("last_login_at");
-            entity.Property(e => e.Name)
-                .HasColumnType("character varying")
-                .HasColumnName("name");
-            entity.Property(e => e.HashedPassword)
-                .HasColumnType("character varying")
-                .HasColumnName("password");
-            entity.Property(e => e.VerifiedAt).HasColumnName("verified_at");
 
-            entity.Property(u => u.AccessFailedCount)
-                .HasColumnName("access_failed_count");
+            entity.Property(u => u.VerifiedAt).HasColumnName("verified_at");
         });
 
         modelBuilder.Entity<UserVerificationToken>(entity =>

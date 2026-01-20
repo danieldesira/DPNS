@@ -7,7 +7,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace DPNS.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialCreate : Migration
+    public partial class InitialMigration : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -50,12 +50,25 @@ namespace DPNS.Migrations
                 {
                     id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    name = table.Column<string>(type: "character varying", nullable: false),
+                    full_name = table.Column<string>(type: "character varying", nullable: false),
                     email = table.Column<string>(type: "character varying", nullable: false),
-                    password = table.Column<string>(type: "character varying", nullable: true),
+                    hashed_password = table.Column<string>(type: "character varying", nullable: true),
                     created_at = table.Column<DateTimeOffset>(type: "time with time zone", nullable: false),
                     last_login_at = table.Column<DateTimeOffset>(type: "time with time zone", nullable: true),
-                    verified_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: true)
+                    verified_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    user_name = table.Column<string>(type: "character varying", nullable: true),
+                    normalized_user_name = table.Column<string>(type: "character varying", nullable: true),
+                    normalized_email = table.Column<string>(type: "character varying", nullable: true),
+                    email_confirmed = table.Column<bool>(type: "boolean", nullable: false),
+                    password_hash = table.Column<string>(type: "character varying", nullable: true),
+                    security_stamp = table.Column<string>(type: "character varying", nullable: true),
+                    concurrency_stamp = table.Column<string>(type: "character varying", nullable: true),
+                    phone_number = table.Column<string>(type: "character varying", nullable: true),
+                    phone_number_confirmed = table.Column<bool>(type: "boolean", nullable: false),
+                    two_factor_enabled = table.Column<bool>(type: "boolean", nullable: false),
+                    lockout_end = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
+                    lockout_enabled = table.Column<bool>(type: "boolean", nullable: false),
+                    access_failed_count = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
                 {

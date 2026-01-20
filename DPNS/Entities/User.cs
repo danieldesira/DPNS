@@ -6,7 +6,7 @@ public partial class User : IdentityUser<int>
 {
     public int Id { get; set; }
 
-    public string Name { get; set; } = null!;
+    public string FullName { get; set; } = null!;
 
     public string Email { get; set; } = null!;
 

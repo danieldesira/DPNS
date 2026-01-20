@@ -19,7 +19,7 @@ namespace DPNS.Repositories
         {
             var userEntry = dbContext.Users.Add(new User
             {
-                Name = name,
+                FullName = name,
                 Email = email,
                 HashedPassword = password,
                 CreatedAt = DateTime.UtcNow,
