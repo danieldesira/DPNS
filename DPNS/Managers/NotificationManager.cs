@@ -7,7 +7,7 @@ namespace DPNS.Managers
     public interface INotificationManager
     {
         Task AddSubscription(string endpoint, string p256dh, string auth, Guid appGuid);
-        Task AddNotification(string title, string text, Guid appGuid);
+        Task AddNotification(string title, string text, Guid appGuid, int currentUserId);
         Task<IList<PushSubscription>> GetPushSubscriptionList(Guid appGuid);
         void SendNotification(string title, string text, IList<PushSubscription> pushSubscriptions);
     }
@@ -37,13 +37,13 @@ namespace DPNS.Managers
             await subscriptionRepository.AddSubscription(endpoint, p256dh, auth, app.Id);
         }
 
-        public async Task AddNotification(string title, string text, Guid appGuid)
+        public async Task AddNotification(string title, string text, Guid appGuid, int currentUserId)
         {
-            var app = await appRepository.GetApp(appGuid);
+            var app = await appRepository.GetApp(appGuid) ?? throw new InvalidOperationException("App not found");
 
-            if (app == null)
+            if (!await appRepository.ExistAppUserLink(app.Id, currentUserId))
             {
-                throw new InvalidOperationException("App not found");
+                throw new InvalidOperationException("User does not have access permission for this app");
             }
 
             await notificationRepository.AddNotification(title, text, app.Url);

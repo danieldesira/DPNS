@@ -66,7 +66,7 @@ Content-Type: application/json
 
 ###
 
-POST {{DPNS_HostAddress}}/api/notification/?appid=fe24b4fa-004b-44fb-ac30-9fdb487246c0
+POST {{DPNS_HostAddress}}/api/notification/?appid=986bb193-67f9-46fe-aae0-1f6edc7f8a83
 Accept: application/json
 Content-Type: application/json
 Authorization: Bearer {{authToken}}
