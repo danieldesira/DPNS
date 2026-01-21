@@ -49,6 +49,20 @@ namespace DPNS.Controllers
             return Results.Ok(new { Message = "User added to app successfully!" });
         }
 
+        [HttpDelete("remove-user/{appId}")]
+        [Authorize]
+        public async Task<IResult> RemoveAppUser([FromRoute] Guid appId, [FromBody] RemoveAppUserRequest payload)
+        {
+            try
+            {
+                await appManager.RemoveAppUser(appId, payload.Email, User.GetUserId() ?? 0);
+            }
+            catch (InvalidOperationException e)
+            {
+                return Results.Conflict(e.Message);
+            }
+            return Results.Ok(new { Message = "User removed from app successfully!" });
+        }
 
         [HttpGet("subscription-count/{appId}")]
         [Authorize]

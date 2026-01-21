@@ -6,10 +6,11 @@ namespace DPNS.Managers
     public interface IAppManager
     {
         Task AddApp(string appName, string url, int userId);
-        Task<App> GetApp(Guid guid);
+        Task<App> GetApp(Guid appGuid);
         Task<IList<App>> GetUserApps(int userId);
         Task<int> GetSubscriptionCount(int appId, int userId);
-        Task AddAppUser(Guid guid, string email, int currentUserId);
+        Task AddAppUser(Guid appGuid, string email, int currentUserId);
+        Task RemoveAppUser(Guid appGuid, string email, int currentUserId);
     }
 
     public class AppManager(
@@ -28,9 +29,9 @@ namespace DPNS.Managers
             await appRepository.AddApp(appName, url, userId);
         }
 
-        public async Task<App> GetApp(Guid guid)
+        public async Task<App> GetApp(Guid appGuid)
         {
-            var app = await appRepository.GetApp(guid);
+            var app = await appRepository.GetApp(appGuid);
             return app ?? throw new InvalidOperationException("App not found");
         }
 
@@ -50,9 +51,9 @@ namespace DPNS.Managers
             return apps.Count;
         }
 
-        public async Task AddAppUser(Guid guid, string email, int currentUserId)
+        public async Task AddAppUser(Guid appGuid, string email, int currentUserId)
         {
-            var app = await appRepository.GetApp(guid) ?? throw new InvalidOperationException("App not found");
+            var app = await appRepository.GetApp(appGuid) ?? throw new InvalidOperationException("App not found");
             var user = await userRepository.GetUser(email) ?? throw new InvalidOperationException("User not found");
             if (user.VerifiedAt == null)
             {
@@ -62,7 +63,7 @@ namespace DPNS.Managers
             {
                 throw new InvalidOperationException("Cannot add yourself to the app");
             }
-            if (!await appRepository.IsUserAppAdmin(app.Id, currentUserId)) 
+            if (!await appRepository.IsUserAppAdmin(app.Id, currentUserId))
             {
                 throw new InvalidOperationException("User is not an admin of the app");
             }
@@ -71,6 +72,25 @@ namespace DPNS.Managers
                 throw new InvalidOperationException("User is already added to the app");
             }
             await appRepository.AddAppUser(app.Id, user.Id);
+        }
+
+        public async Task RemoveAppUser(Guid appGuid, string email, int currentUserId)
+        {
+            var app = await appRepository.GetApp(appGuid) ?? throw new InvalidOperationException("App not found");
+            var user = await userRepository.GetUser(email) ?? throw new InvalidOperationException("User not found");
+            if (!await appRepository.IsUserAppAdmin(app.Id, currentUserId))
+            {
+                throw new InvalidOperationException("User is not an admin of the app");
+            }
+            if (!await appRepository.ExistAppUserLink(app.Id, user.Id))
+            {
+                throw new InvalidOperationException("User is not added to the app");
+            }
+            if (currentUserId == user.Id)
+            {
+                throw new InvalidOperationException("You may not remove yourself");
+            }
+            await appRepository.RemoveAppUser(app.Id, user.Id);
         }
     }
 }

@@ -7,8 +7,8 @@ Accept: application/json
 Content-Type: application/json
 
 {
-  "name": "tester2",
-  "email": "tester2@gmail.com",
+  "name": "tester",
+  "email": "tester@gmail.com",
   "password": "123456"
 }
 
@@ -19,7 +19,7 @@ Accept: application/json
 Content-Type: application/json
 
 {
-  "verificationCode": "UhuUck2RcEaeNJs9MuPclg=="
+  "verificationCode": "/8OiWPl9IkOZDtuo4j4Skg=="
 }
 
 ### 
@@ -90,7 +90,17 @@ Content-Type: application/json
 Authorization: Bearer {{authToken}}
 
 {
-  "appGuid": "986bb193-67f9-46fe-aae0-1f6edc7f8a83",
+  "appGuid": "a3143c93-5dc7-412f-95e5-4c0d08e4a8c6",
+  "email": "tester@gmail.com"
+}
+
+###
+
+DELETE {{DPNS_HostAddress}}/api/app/remove-user/a3143c93-5dc7-412f-95e5-4c0d08e4a8c6
+Content-Type: application/json
+Authorization: Bearer {{authToken}}
+
+{
   "email": "tester@gmail.com"
 }
 

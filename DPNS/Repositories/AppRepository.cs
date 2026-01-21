@@ -12,6 +12,7 @@ namespace DPNS.Repositories
         Task<App?> GetApp(string name, string url);
         Task<IList<App>> GetUserApps(int userId);
         Task AddAppUser(int appId, int userId);
+        Task RemoveAppUser(int appId, int userId);
         Task<bool> IsUserAppAdmin(int appId, int userId);
         Task<bool> ExistAppUserLink(int appId, int userId);
     }
@@ -53,6 +54,16 @@ namespace DPNS.Repositories
                 CreatedAt = DateTime.UtcNow,
             });
             await dbContext.SaveChangesAsync();
+        }
+
+        public async Task RemoveAppUser(int appId, int userId)
+        {
+            var appUser = await dbContext.AppUsers.FirstOrDefaultAsync(au => au.AppId == appId && au.UserId == userId);
+            if (appUser != null)
+            {
+                dbContext.AppUsers.Remove(appUser);
+                await dbContext.SaveChangesAsync();
+            }
         }
 
         public async Task<App?> GetApp(Guid guid)
