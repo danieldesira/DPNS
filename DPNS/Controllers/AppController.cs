@@ -2,7 +2,6 @@
 using DPNS.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Identity;
 using DPNS.Extensions;
 
 namespace DPNS.Controllers
@@ -20,7 +19,7 @@ namespace DPNS.Controllers
             }
             catch (InvalidOperationException e)
             {
-                return Results.Conflict(e.Message);
+                return Results.Conflict(new { e.Message });
             }
 
             return Results.Ok(new { Message = "Project added successfully!" });
@@ -44,7 +43,7 @@ namespace DPNS.Controllers
             }
             catch (InvalidOperationException e)
             {
-                return Results.Conflict(e.Message);
+                return Results.Conflict(new { e.Message });
             }
             return Results.Ok(new { Message = "User added to app successfully!" });
         }
@@ -56,12 +55,12 @@ namespace DPNS.Controllers
             try
             {
                 await appManager.RemoveAppUser(appId, payload.Email, User.GetUserId() ?? 0);
+                return Results.NoContent();
             }
             catch (InvalidOperationException e)
             {
-                return Results.Conflict(e.Message);
+                return Results.Conflict(new { e.Message });
             }
-            return Results.Ok(new { Message = "User removed from app successfully!" });
         }
 
         [HttpGet("{appGuid}/subscription-count")]
@@ -75,7 +74,7 @@ namespace DPNS.Controllers
             }
             catch (InvalidOperationException e)
             {
-                return Results.Conflict(e.Message);
+                return Results.Conflict(new { e.Message });
             }
         }
 
@@ -90,7 +89,7 @@ namespace DPNS.Controllers
             }
             catch (InvalidOperationException e)
             {
-                return Results.Conflict(e.Message);
+                return Results.Conflict(new { e.Message });
             }
         }
 
@@ -105,7 +104,7 @@ namespace DPNS.Controllers
             }
             catch (InvalidOperationException e)
             {
-                return Results.Conflict(e.Message);
+                return Results.Conflict(new { e.Message });
             }
         }
     }
