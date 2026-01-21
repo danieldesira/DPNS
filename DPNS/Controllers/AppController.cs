@@ -93,5 +93,20 @@ namespace DPNS.Controllers
                 return Results.Conflict(e.Message);
             }
         }
+
+        [HttpGet("{appGuid}/notifications")]
+        [Authorize]
+        public async Task<IResult> GetNotifications([FromRoute] Guid appGuid)
+        {
+            try
+            {
+                var notifications = await appManager.GetAppNotifications(appGuid, User.GetUserId() ?? 0);
+                return Results.Ok(new { Notifications = notifications });
+            }
+            catch (InvalidOperationException e)
+            {
+                return Results.Conflict(e.Message);
+            }
+        }
     }
 }

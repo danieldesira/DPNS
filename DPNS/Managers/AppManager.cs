@@ -1,6 +1,5 @@
 ﻿using DPNS.Entities;
 using DPNS.Repositories;
-using System.Security.Cryptography.X509Certificates;
 
 namespace DPNS.Managers
 {
@@ -8,11 +7,12 @@ namespace DPNS.Managers
     {
         Task AddApp(string appName, string url, int userId);
         Task<App> GetApp(Guid appGuid);
-        Task<IList<App>> GetUserApps(int userId);
+        Task<IEnumerable<App>> GetUserApps(int userId);
         Task<int> GetSubscriptionCount(Guid appGuid, int userId);
         Task AddAppUser(Guid appGuid, string email, int currentUserId);
         Task RemoveAppUser(Guid appGuid, string email, int currentUserId);
         Task DeleteApp(Guid appGuid, int currentUserId);
+        Task<IEnumerable<PushNotification>> GetAppNotifications(Guid appGuid, int currentUserId);
     }
 
     public class AppManager(
@@ -37,7 +37,7 @@ namespace DPNS.Managers
             return app ?? throw new InvalidOperationException("App not found");
         }
 
-        public async Task<IList<App>> GetUserApps(int userId)
+        public async Task<IEnumerable<App>> GetUserApps(int userId)
         {
             return await appRepository.GetUserApps(userId);
         }
@@ -52,7 +52,7 @@ namespace DPNS.Managers
             }
 
             var subscriptions = await subscriptionRepository.GetSubscriptions(app.Id);
-            return subscriptions.Count;
+            return subscriptions.Count();
         }
 
         public async Task AddAppUser(Guid appGuid, string email, int currentUserId)
@@ -105,6 +105,16 @@ namespace DPNS.Managers
                 throw new InvalidOperationException("User is not an admin of the app");
             }
             await appRepository.DeleteApp(app.Id);
+        }
+
+        public async Task<IEnumerable<PushNotification>> GetAppNotifications(Guid appGuid, int currentUserId)
+        {
+            var app = await appRepository.GetApp(appGuid) ?? throw new InvalidOperationException("App not found");
+            if (!await appRepository.ExistAppUserLink(app.Id, currentUserId))
+            {
+                throw new InvalidOperationException("User does not belong to this app");
+            }
+            return await appRepository.GetAppNotifications(app.Url);
         }
     }
 }

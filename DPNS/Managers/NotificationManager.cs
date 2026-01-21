@@ -8,8 +8,8 @@ namespace DPNS.Managers
     {
         Task AddSubscription(string endpoint, string p256dh, string auth, Guid appGuid);
         Task AddNotification(string title, string text, Guid appGuid, int currentUserId);
-        Task<IList<PushSubscription>> GetPushSubscriptionList(Guid appGuid);
-        void SendNotification(string title, string text, IList<PushSubscription> pushSubscriptions);
+        Task<IEnumerable<PushSubscription>> GetPushSubscriptionList(Guid appGuid);
+        void SendNotification(string title, string text, IEnumerable<PushSubscription> pushSubscriptions);
     }
 
     public class NotificationManager(
@@ -52,7 +52,7 @@ namespace DPNS.Managers
             await notificationRepository.AddNotification(title, text, app.Url, user.Email);
         }
 
-        public async Task<IList<PushSubscription>> GetPushSubscriptionList(Guid appGuid)
+        public async Task<IEnumerable<PushSubscription>> GetPushSubscriptionList(Guid appGuid)
         {
             var app = await appRepository.GetApp(appGuid);
 
@@ -65,7 +65,7 @@ namespace DPNS.Managers
                 .Select(s => new PushSubscription(s.Endpoint, s.P256dh, s.Auth))];
         }
 
-        public void SendNotification(string title, string text, IList<PushSubscription> pushSubscriptions)
+        public void SendNotification(string title, string text, IEnumerable<PushSubscription> pushSubscriptions)
         {
             VapidDetails vapidDetails = new(
                 "mailto:desiradaniel2007@gmail.com",

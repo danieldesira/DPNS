@@ -1,6 +1,6 @@
 @DPNS_HostAddress = http://subnodulous-kaelyn-matrimonially.ngrok-free.dev
 @authToken = 
-@appGuid = a3143c93-5dc7-412f-95e5-4c0d08e4a8c6
+@appGuid = e2123b9c-cd5f-41ee-9884-c3ef121c3c3e
 
 # @name registration
 POST {{DPNS_HostAddress}}/api/auth/register
@@ -115,6 +115,12 @@ Authorization: Bearer {{authToken}}
 ###
 
 DELETE {{DPNS_HostAddress}}/api/app/{{appGuid}}/
+Content-Type: application/json
+Authorization: Bearer {{authToken}}
+
+###
+
+GET {{DPNS_HostAddress}}/api/app/{{appGuid}}/notifications/
 Content-Type: application/json
 Authorization: Bearer {{authToken}}
 

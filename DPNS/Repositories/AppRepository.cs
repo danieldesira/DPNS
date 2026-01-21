@@ -1,6 +1,5 @@
 ﻿using DPNS.Entities;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.VisualBasic;
 
 namespace DPNS.Repositories
 {
@@ -9,12 +8,13 @@ namespace DPNS.Repositories
         Task AddApp(string name, string url, int userId);
         Task<App?> GetApp(Guid guid);
         Task<App?> GetApp(string name, string url);
-        Task<IList<App>> GetUserApps(int userId);
+        Task<IEnumerable<App>> GetUserApps(int userId);
         Task AddAppUser(int appId, int userId);
         Task RemoveAppUser(int appId, int userId);
         Task<bool> IsUserAppAdmin(int appId, int userId);
         Task<bool> ExistAppUserLink(int appId, int userId);
         Task DeleteApp(int appId);
+        Task<IEnumerable<PushNotification>> GetAppNotifications(string appUrl);
     }
 
     public class AppRepository(DpnsDbContext dbContext) : IAppRepository
@@ -76,7 +76,7 @@ namespace DPNS.Repositories
             return await dbContext.Apps.FirstOrDefaultAsync(p => p.AppName == name || p.Url == url);
         }
 
-        public async Task<IList<App>> GetUserApps(int userId)
+        public async Task<IEnumerable<App>> GetUserApps(int userId)
         {
             return await dbContext
                             .AppUsers
@@ -112,6 +112,11 @@ namespace DPNS.Repositories
             await dbContext.SaveChangesAsync();
 
             await transaction.CommitAsync();
+        }
+
+        public async Task<IEnumerable<PushNotification>> GetAppNotifications(string appUrl)
+        {
+            return await dbContext.PushNotifications.Where(n => n.AppUrl == appUrl).ToListAsync();
         }
     }
 }
