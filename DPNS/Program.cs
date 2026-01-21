@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using Scalar.AspNetCore;
 using System.Text;
 using WebPush;
 
@@ -86,14 +87,14 @@ var app = builder.Build();
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
+    app.MapScalarApiReference();
+}
+else
+{
+    app.UseHttpsRedirection();
 }
 
 app.UseCors("Origins");
-
-if (!app.Environment.IsDevelopment())
-{ 
-    app.UseHttpsRedirection();
-}
 
 app.Use(async (context, next) =>
 {
