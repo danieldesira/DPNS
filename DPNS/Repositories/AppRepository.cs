@@ -1,5 +1,6 @@
 ﻿using DPNS.Entities;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.VisualBasic;
 
 namespace DPNS.Repositories
 {
@@ -13,6 +14,7 @@ namespace DPNS.Repositories
         Task RemoveAppUser(int appId, int userId);
         Task<bool> IsUserAppAdmin(int appId, int userId);
         Task<bool> ExistAppUserLink(int appId, int userId);
+        Task DeleteApp(int appId);
     }
 
     public class AppRepository(DpnsDbContext dbContext) : IAppRepository
@@ -91,6 +93,25 @@ namespace DPNS.Repositories
         public async Task<bool> ExistAppUserLink(int appId, int userId)
         {
             return await dbContext.AppUsers.AnyAsync(au => au.AppId == appId && au.UserId == userId);
+        }
+
+        public async Task DeleteApp(int appId)
+        {
+            using var transaction = await dbContext.Database.BeginTransactionAsync();
+
+            var appUsers = await dbContext.AppUsers.Where(au => au.AppId == appId).ToListAsync();
+            dbContext.AppUsers.RemoveRange(appUsers);
+            await dbContext.SaveChangesAsync();
+
+            var subscriptions = await dbContext.PushSubscriptions.Where(s =>  s.AppId == appId).ToListAsync();
+            dbContext.PushSubscriptions.RemoveRange(subscriptions);
+            await dbContext.SaveChangesAsync();
+
+            var app = await dbContext.Apps.FirstAsync(a => a.Id == appId);
+            dbContext.Apps.Remove(app);
+            await dbContext.SaveChangesAsync();
+
+            await transaction.CommitAsync();
         }
     }
 }

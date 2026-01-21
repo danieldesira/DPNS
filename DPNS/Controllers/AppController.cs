@@ -78,5 +78,20 @@ namespace DPNS.Controllers
                 return Results.Conflict(e.Message);
             }
         }
+
+        [HttpDelete("{appGuid}")]
+        [Authorize]
+        public async Task<IResult> DeleteApp([FromRoute] Guid appGuid)
+        {
+            try
+            {
+                await appManager.DeleteApp(appGuid, User.GetUserId() ?? 0);
+                return Results.NoContent();
+            }
+            catch (InvalidOperationException e)
+            {
+                return Results.Conflict(e.Message);
+            }
+        }
     }
 }

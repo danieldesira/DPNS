@@ -1,5 +1,6 @@
 ﻿using DPNS.Entities;
 using DPNS.Repositories;
+using System.Security.Cryptography.X509Certificates;
 
 namespace DPNS.Managers
 {
@@ -11,6 +12,7 @@ namespace DPNS.Managers
         Task<int> GetSubscriptionCount(Guid appGuid, int userId);
         Task AddAppUser(Guid appGuid, string email, int currentUserId);
         Task RemoveAppUser(Guid appGuid, string email, int currentUserId);
+        Task DeleteApp(Guid appGuid, int currentUserId);
     }
 
     public class AppManager(
@@ -93,6 +95,16 @@ namespace DPNS.Managers
                 throw new InvalidOperationException("You may not remove yourself");
             }
             await appRepository.RemoveAppUser(app.Id, user.Id);
+        }
+
+        public async Task DeleteApp(Guid appGuid, int currentUserId)
+        {
+            var app = await appRepository.GetApp(appGuid) ?? throw new InvalidOperationException("App not found");
+            if (!await appRepository.IsUserAppAdmin(app.Id, currentUserId))
+            {
+                throw new InvalidOperationException("User is not an admin of the app");
+            }
+            await appRepository.DeleteApp(app.Id);
         }
     }
 }

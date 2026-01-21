@@ -1,4 +1,4 @@
-@DPNS_HostAddress = https://subnodulous-kaelyn-matrimonially.ngrok-free.dev
+@DPNS_HostAddress = http://subnodulous-kaelyn-matrimonially.ngrok-free.dev
 @authToken = 
 @appGuid = a3143c93-5dc7-412f-95e5-4c0d08e4a8c6
 
@@ -109,6 +109,12 @@ Authorization: Bearer {{authToken}}
 
 GET {{DPNS_HostAddress}}/api/app/{{appGuid}}/subscription-count/
 Accept: application/json
+Content-Type: application/json
+Authorization: Bearer {{authToken}}
+
+###
+
+DELETE {{DPNS_HostAddress}}/api/app/{{appGuid}}/
 Content-Type: application/json
 Authorization: Bearer {{authToken}}
 
