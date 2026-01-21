@@ -8,7 +8,7 @@ namespace DPNS.Managers
         Task AddApp(string appName, string url, int userId);
         Task<App> GetApp(Guid appGuid);
         Task<IList<App>> GetUserApps(int userId);
-        Task<int> GetSubscriptionCount(int appId, int userId);
+        Task<int> GetSubscriptionCount(Guid appGuid, int userId);
         Task AddAppUser(Guid appGuid, string email, int currentUserId);
         Task RemoveAppUser(Guid appGuid, string email, int currentUserId);
     }
@@ -40,15 +40,17 @@ namespace DPNS.Managers
             return await appRepository.GetUserApps(userId);
         }
 
-        public async Task<int> GetSubscriptionCount(int appId, int userId)
+        public async Task<int> GetSubscriptionCount(Guid appGuid, int userId)
         {
-            if (!await appRepository.ExistAppUserLink(appId, userId))
+            var app = await appRepository.GetApp(appGuid) ?? throw new InvalidOperationException("App not found");
+
+            if (!await appRepository.ExistAppUserLink(app.Id, userId))
             {
                 throw new InvalidOperationException("User does not have access to this app");
             }
 
-            var apps = await subscriptionRepository.GetSubscriptions(appId);
-            return apps.Count;
+            var subscriptions = await subscriptionRepository.GetSubscriptions(app.Id);
+            return subscriptions.Count;
         }
 
         public async Task AddAppUser(Guid appGuid, string email, int currentUserId)

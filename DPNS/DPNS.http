@@ -1,5 +1,6 @@
 @DPNS_HostAddress = https://subnodulous-kaelyn-matrimonially.ngrok-free.dev
 @authToken = 
+@appGuid = a3143c93-5dc7-412f-95e5-4c0d08e4a8c6
 
 # @name registration
 POST {{DPNS_HostAddress}}/api/auth/register
@@ -52,7 +53,7 @@ Authorization: Bearer {{authToken}}
 
 ###
 
-POST {{DPNS_HostAddress}}/api/subscription/?appId=fe24b4fa-004b-44fb-ac30-9fdb487246c0
+POST {{DPNS_HostAddress}}/api/subscription/?appId={{appGuid}}
 Accept: application/json
 Content-Type: application/json
 
@@ -66,7 +67,7 @@ Content-Type: application/json
 
 ###
 
-POST {{DPNS_HostAddress}}/api/notification/?appid=a3143c93-5dc7-412f-95e5-4c0d08e4a8c6
+POST {{DPNS_HostAddress}}/api/notification/?appid={{appGuid}}
 Accept: application/json
 Content-Type: application/json
 Authorization: Bearer {{authToken}}
@@ -90,13 +91,13 @@ Content-Type: application/json
 Authorization: Bearer {{authToken}}
 
 {
-  "appGuid": "a3143c93-5dc7-412f-95e5-4c0d08e4a8c6",
+  "appGuid": "{{appGuid}}",
   "email": "tester@gmail.com"
 }
 
 ###
 
-DELETE {{DPNS_HostAddress}}/api/app/remove-user/a3143c93-5dc7-412f-95e5-4c0d08e4a8c6
+DELETE {{DPNS_HostAddress}}/api/app/{{appGuid}}/remove-user/
 Content-Type: application/json
 Authorization: Bearer {{authToken}}
 
@@ -106,7 +107,8 @@ Authorization: Bearer {{authToken}}
 
 ###
 
-GET {{DPNS_HostAddress}}/api/app/subscription-count/1
+GET {{DPNS_HostAddress}}/api/app/{{appGuid}}/subscription-count/
+Accept: application/json
 Content-Type: application/json
 Authorization: Bearer {{authToken}}
 

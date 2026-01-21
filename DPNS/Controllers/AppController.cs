@@ -49,7 +49,7 @@ namespace DPNS.Controllers
             return Results.Ok(new { Message = "User added to app successfully!" });
         }
 
-        [HttpDelete("remove-user/{appId}")]
+        [HttpDelete("{appId}/remove-user")]
         [Authorize]
         public async Task<IResult> RemoveAppUser([FromRoute] Guid appId, [FromBody] RemoveAppUserRequest payload)
         {
@@ -64,13 +64,13 @@ namespace DPNS.Controllers
             return Results.Ok(new { Message = "User removed from app successfully!" });
         }
 
-        [HttpGet("subscription-count/{appId}")]
+        [HttpGet("{appGuid}/subscription-count")]
         [Authorize]
-        public async Task<IResult> GetSubscriptionCount([FromRoute] int appId)
+        public async Task<IResult> GetSubscriptionCount([FromRoute] Guid appGuid)
         {
             try
             { 
-                var subscriptionCount = await appManager.GetSubscriptionCount(appId, User.GetUserId() ?? 0);
+                var subscriptionCount = await appManager.GetSubscriptionCount(appGuid, User.GetUserId() ?? 0);
                 return Results.Ok(new { SubscriptionCount = subscriptionCount });
             }
             catch (InvalidOperationException e)

@@ -1,7 +1,5 @@
 ﻿using DPNS.Entities;
 using Microsoft.EntityFrameworkCore;
-using System.Threading.Tasks;
-using System.Transactions;
 
 namespace DPNS.Repositories
 {
