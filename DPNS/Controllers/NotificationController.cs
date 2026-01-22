@@ -22,9 +22,13 @@ namespace DPNS.Controllers
 
                 return Results.Ok(new { Message = "Notification sent successfully" });
             }
+            catch (InvalidOperationException ex)
+            {
+                return Results.Conflict(new { ex.Message });
+            }
             catch (Exception ex)
             {
-                return Results.Problem(ex.Message);
+                return Results.BadRequest(new { ex.Message });
             }
         }
     }
