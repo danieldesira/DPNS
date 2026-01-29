@@ -1,5 +1,7 @@
 ﻿using DPNS.Entities;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage;
+using DPNS.Extensions;
 
 namespace DPNS.Repositories
 {
@@ -17,7 +19,12 @@ namespace DPNS.Repositories
     {
         public async Task AddUser(string name, string email, string password)
         {
-            using var transaction = await dbContext.Database.BeginTransactionAsync();
+            IDbContextTransaction? transaction = null;
+
+            if (!dbContext.Database.IsInMemory())
+            {
+                transaction = await dbContext.Database.BeginTransactionAsync();
+            }
 
             var userEntry = dbContext.Users.Add(new User
             {
@@ -30,7 +37,10 @@ namespace DPNS.Repositories
             
             await CreateVerificationToken(userEntry.Entity.Id);
 
-            await transaction.CommitAsync();
+            if (transaction != null)
+            {
+                await transaction.CommitAsync();
+            }
         }
 
         public async Task<User?> GetUser(string email)

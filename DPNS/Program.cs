@@ -19,8 +19,7 @@ builder.Services.AddOpenApi();
 
 builder.Services.AddLogging();
 
-builder.Services.AddDbContext<DpnsDbContext>(options =>
-    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
+builder.Services.AddDbContext<DpnsDbContext>();
 
 builder.Services.AddIdentity<User, IdentityRole<int>>(options =>
 {
@@ -40,6 +39,7 @@ builder.Services.AddScoped<IAppRepository, AppRepository>();
 builder.Services.AddScoped<IAppManager, AppManager>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IUserManager, UserManager>();
+builder.Services.AddScoped<IEmailRepository, EmailRepository>();
 
 builder.Services.AddSingleton<IWebPushClient, WebPushClient>();
 

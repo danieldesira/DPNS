@@ -27,8 +27,15 @@ public partial class DpnsDbContext : DbContext
 
     public virtual DbSet<UserVerificationToken> UserVerificationTokens { get; set; }
 
+    public virtual DbSet<EmailMessage> EmailMessages { get; set; }
+
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        => optionsBuilder.UseNpgsql("Name=DefaultConnection");
+    {
+        if (!optionsBuilder.IsConfigured)
+        {
+            optionsBuilder.UseNpgsql("Name=DefaultConnection");
+        }
+    }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -229,6 +236,24 @@ public partial class DpnsDbContext : DbContext
                 .HasForeignKey(d => d.UserId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("user_verification_tokens_users_fk");
+        });
+
+        modelBuilder.Entity<EmailMessage>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("email_messages_pk");
+
+            entity.ToTable("email_messages");
+
+            entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.ToEmail)
+                .HasColumnType("character varying")
+                .HasColumnName("to_email");
+            entity.Property(e => e.Subject)
+                .HasColumnType("character varying")
+                .HasColumnName("subject");
+            entity.Property(e => e.Body)
+                .HasColumnType("text")
+                .HasColumnName("body");
         });
 
         OnModelCreatingPartial(modelBuilder);

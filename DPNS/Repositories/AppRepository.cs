@@ -1,5 +1,7 @@
 ﻿using DPNS.Entities;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage;
+using System.Data;
 
 namespace DPNS.Repositories
 {
@@ -21,7 +23,12 @@ namespace DPNS.Repositories
     {
         public async Task AddApp(string name, string url, int userId)
         {
-            using var transaction = await dbContext.Database.BeginTransactionAsync();
+            IDbContextTransaction? transaction = null;
+            
+            if (!dbContext.Database.IsInMemory())
+            {
+                transaction = await dbContext.Database.BeginTransactionAsync();
+            }
 
             var app = dbContext.Apps.Add(new App
             {
@@ -41,7 +48,10 @@ namespace DPNS.Repositories
             });
             await dbContext.SaveChangesAsync();
 
-            await transaction.CommitAsync();
+            if (transaction != null)
+            {
+                await transaction.CommitAsync();
+            }
         }
 
         public async Task AddAppUser(int appId, int userId)
@@ -97,7 +107,12 @@ namespace DPNS.Repositories
 
         public async Task DeleteApp(int appId)
         {
-            using var transaction = await dbContext.Database.BeginTransactionAsync();
+            IDbContextTransaction? transaction = null;
+
+            if (!dbContext.Database.IsInMemory())
+            {
+                transaction = await dbContext.Database.BeginTransactionAsync();
+            }
 
             var appUsers = await dbContext.AppUsers.Where(au => au.AppId == appId).ToListAsync();
             dbContext.AppUsers.RemoveRange(appUsers);
@@ -111,7 +126,10 @@ namespace DPNS.Repositories
             dbContext.Apps.Remove(app);
             await dbContext.SaveChangesAsync();
 
-            await transaction.CommitAsync();
+            if (transaction != null)
+            {
+                await transaction.CommitAsync();
+            }
         }
 
         public async Task<IEnumerable<PushNotification>> GetAppNotifications(string appUrl)

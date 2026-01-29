@@ -1,10 +1,7 @@
-﻿using DPNS.Entities;
-using DPNS.Models;
-using DPNS.Repositories;
+﻿using DPNS.Repositories;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
-using System.Net.Mail;
 using System.Security.Claims;
 using System.Text;
 
@@ -17,7 +14,7 @@ namespace DPNS.Managers
         Task<string> Login(string email, string password);
     }
 
-    public class UserManager(IUserRepository userRepository, IConfiguration configuration) : IUserManager
+    public class UserManager(IUserRepository userRepository, IConfiguration configuration, IEmailRepository emailRepository) : IUserManager
     {
         public async Task RegisterUser(Models.User user)
         {
@@ -31,14 +28,20 @@ namespace DPNS.Managers
 
             await userRepository.AddUser(user.Name, user.Email, hash);
 
-            SmtpClient smtpClient = new();
-            smtpClient.Send(new MailMessage(
-                "info@dpns.com",
+            //SmtpClient smtpClient = new();
+            //smtpClient.Send(new MailMessage(
+            //    "info@dpns.com",
+            //    user.Email,
+            //    "Welcome to DPNS",
+            //    $"Hello {user.Name},<br/><br/>Thank you for registering at DPNS! We're excited to have you on board.<br/><br/>" +
+            //    "Please verify your email <a href=''>here.</a><br/><br/>Best regards,<br/>The DPNS Team"
+            //));
+            await emailRepository.AddEmail(
                 user.Email,
                 "Welcome to DPNS",
                 $"Hello {user.Name},<br/><br/>Thank you for registering at DPNS! We're excited to have you on board.<br/><br/>" +
-                "Please verify your email <a href=''>here.</a><br/><br/>Best regards,<br/>The DPNS Team"
-            ));
+                $"Please verify your email <a href=''>here.</a><br/><br/>Best regards,<br/>The DPNS Team"
+            );
         }
 
         public async Task VerifyEmail(string token)
