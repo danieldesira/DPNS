@@ -10,6 +10,7 @@ namespace DPNS.Managers
         Task AddNotification(string title, string text, Guid appGuid, int currentUserId);
         Task<IEnumerable<PushSubscription>> GetPushSubscriptionList(Guid appGuid);
         void SendNotification(string title, string text, IEnumerable<PushSubscription> pushSubscriptions);
+        Task DeleteSubscription(string endpoint);
     }
 
     public class NotificationManager(
@@ -50,6 +51,7 @@ namespace DPNS.Managers
             var user = await userRepository.GetUser(currentUserId) ?? throw new InvalidOperationException("User not found");
 
             await notificationRepository.AddNotification(title, text, app.Url, user.Email);
+            await notificationRepository.AddNotificationToCache(title, text, app.Url, user.Email);
         }
 
         public async Task<IEnumerable<PushSubscription>> GetPushSubscriptionList(Guid appGuid)
@@ -82,6 +84,12 @@ namespace DPNS.Managers
             {
                 webPushClient.SendNotification(sub, notificationContent, vapidDetails);
             }
+        }
+
+        public async Task DeleteSubscription(string endpoint)
+        {
+            var subscription = await subscriptionRepository.GetSubscriptionByEndpoint(endpoint) ?? throw new InvalidOperationException("Subscription not found");
+            await subscriptionRepository.DeleteSubscription(subscription.Id);
         }
     }
 }

@@ -8,6 +8,8 @@ namespace DPNS.Repositories
         Task AddSubscription(string endpoint, string p256dh, string auth, int appId);
         Task<IEnumerable<PushSubscription>> GetSubscriptions(int appId);
         Task<PushSubscription?> GetSubscription(string endpoint, string p256dh, string auth);
+        Task<PushSubscription?> GetSubscriptionByEndpoint(string endpoint);
+        Task DeleteSubscription(int id);
     }
 
 
@@ -35,6 +37,21 @@ namespace DPNS.Repositories
         {
             return await dbContext.PushSubscriptions
                     .FirstOrDefaultAsync(s => s.Endpoint == endpoint && s.P256dh == p256dh && s.Auth == auth);
+        }
+        
+        public async Task<PushSubscription?> GetSubscriptionByEndpoint(string endpoint)
+        {
+            return await dbContext.PushSubscriptions.FirstOrDefaultAsync(s => s.Endpoint == endpoint);
+        }
+
+        public async Task DeleteSubscription(int id)
+        {
+            var subscription = await dbContext.PushSubscriptions.FindAsync(id);
+            if (subscription != null)
+            {
+                dbContext.PushSubscriptions.Remove(subscription);
+                await dbContext.SaveChangesAsync();
+            }
         }
     }
 }

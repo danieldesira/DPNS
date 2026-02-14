@@ -9,7 +9,7 @@ namespace DPNS.Controllers
     public class SubscriptionController(INotificationManager notificationManager) : ControllerBase
     {
         [HttpPost]
-        public async Task<IResult> CreateSubscriptionAsync([FromBody] Subscription payload, [FromQuery(Name = "appId")] Guid appId)
+        public async Task<IResult> CreateSubscription([FromBody] Subscription payload, [FromQuery(Name = "appId")] Guid appId)
         {
             try
             {
@@ -26,6 +26,20 @@ namespace DPNS.Controllers
             }
 
             return Results.Ok(new { Message = "Client subscribed successfully!" });
+        }
+
+        [HttpDelete]
+        public async Task<IResult> DeleteSubscription([FromBody] RemoveSubscriptionRequest payload)
+        {
+            try
+            {
+                await notificationManager.DeleteSubscription(payload.Endpoint);
+            }
+            catch (InvalidOperationException e)
+            {
+                return Results.Conflict(new { e.Message });
+            }
+            return Results.Ok(new { Message = "Client unsubscribed successfully!" });
         }
     }
 }
