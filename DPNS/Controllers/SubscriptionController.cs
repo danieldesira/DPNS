@@ -29,11 +29,11 @@ namespace DPNS.Controllers
         }
 
         [HttpDelete]
-        public async Task<IResult> DeleteSubscription([FromBody] RemoveSubscriptionRequest payload)
+        public async Task<IResult> DeleteSubscription([FromQuery(Name = "endpoint")] string endpoint)
         {
             try
             {
-                await notificationManager.DeleteSubscription(payload.Endpoint);
+                await notificationManager.DeleteSubscription(endpoint);
             }
             catch (InvalidOperationException e)
             {
