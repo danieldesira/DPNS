@@ -2,12 +2,11 @@
 FROM mcr.microsoft.com/dotnet/aspnet:10.0 AS base
 WORKDIR /app
 
-# Tell Kestrel to listen on port 8080 (http) and 8081 (https)
-ENV ASPNETCORE_URLS=http://+:8080;https://+:8081
+# Tell Kestrel to listen on port 8080 (http)
+ENV ASPNETCORE_URLS=http://+:8080
 
 # Expose the ports (matches ENV above)
 EXPOSE 8080
-EXPOSE 8081
 
 # Build stage
 FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
