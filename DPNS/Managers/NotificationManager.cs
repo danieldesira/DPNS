@@ -51,7 +51,7 @@ namespace DPNS.Managers
             var user = await userRepository.GetUser(currentUserId) ?? throw new InvalidOperationException("User not found");
 
             await notificationRepository.AddNotification(title, text, app.Url, user.Email);
-            await notificationRepository.AddNotificationToCache(title, text, app.Url, user.Email);
+            //await notificationRepository.AddNotificationToCache(title, text, app.Url, user.Email);
         }
 
         public async Task<IEnumerable<PushSubscription>> GetPushSubscriptionList(Guid appGuid)
