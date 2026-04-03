@@ -1,4 +1,5 @@
 ﻿using DPNS.Entities;
+using StackExchange.Redis;
 
 namespace DPNS.Repositories
 {
@@ -7,18 +8,27 @@ namespace DPNS.Repositories
         Task AddEmail(string to, string subject, string body);
     }
 
-    public class EmailRepository(DpnsDbContext dbContext) : IEmailRepository
+    public class EmailRepository(IConfiguration configuration) : IEmailRepository
     {
-        public Task AddEmail(string to, string subject, string body)
+        public async Task AddEmail(string to, string subject, string body)
         {
-            dbContext.EmailMessages.Add(new EmailMessage
+            string redisHost = configuration?["Redis:Host"] ?? "localhost";
+            int redisPort = int.TryParse(configuration?["Redis:Port"], out int port) ? port : 6379;
+
+            var muxer = await ConnectionMultiplexer.ConnectAsync(new ConfigurationOptions
             {
-                ToEmail = to,
+                EndPoints = { { redisHost, redisPort } },
+                User = configuration?["Redis:User"],
+                Password = configuration?["Redis:Password"],
+            });
+            var db = muxer.GetDatabase();
+            await db.ListLeftPushAsync("emails", System.Text.Json.JsonSerializer.Serialize(new
+            {
+                Receiver = to,
                 Subject = subject,
                 Body = body,
-                CreatedAt = DateTime.UtcNow,
-            });
-            return dbContext.SaveChangesAsync();
+                CreatedAt = DateTime.Now,
+            }));
         }
     }
 }
