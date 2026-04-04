@@ -12,8 +12,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace DPNS.Migrations
 {
     [DbContext(typeof(DpnsDbContext))]
-    [Migration("20260403193310_RemoveEmails")]
-    partial class RemoveEmails
+    [Migration("20260404172933_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

@@ -1,5 +1,4 @@
-﻿using DPNS.Entities;
-using StackExchange.Redis;
+﻿using StackExchange.Redis;
 
 namespace DPNS.Repositories
 {
